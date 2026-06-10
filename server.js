@@ -148,6 +148,13 @@ app.post('/api/insider', (req, res) => {
   res.json(msg);
 });
 
+app.delete('/api/insider/:id', (req, res) => {
+  let msgs = loadInsider();
+  msgs = msgs.filter(m => m.id != req.params.id);
+  saveInsider(msgs);
+  res.json({ ok: true });
+});
+
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`⚽ 竞彩足球服务运行中: http://0.0.0.0:${PORT}`);
 });

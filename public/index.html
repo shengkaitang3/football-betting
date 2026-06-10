@@ -625,31 +625,6 @@ async function loadOrders() {
       }
 
       let resultHtml = '';
-      if (o.result === '待结算') {
-        resultHtml = '<select style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:2px 4px;color:var(--text);font-size:11px" onchange="updateResult(' + o.id + ',this.value)">'
-          + '<option value="待结算" selected>⏳ 待结算</option>'
-          + '<option value="中">✅ 中</option>'
-          + '<option value="未中">❌ 未中</option>'
-          + '<option value="取消">取消</option></select>';
-      } else {
-        const cls = { '中':'tag-win','未中':'tag-lose','取消':'tag-cancel' }[o.result] || 'tag-pending';
-        resultHtml = '<span class="tag ' + cls + '">' + (o.result === '中' ? '✅ ' : o.result === '未中' ? '❌ ' : '') + o.result + '</span>';
-      }
-
-      const authorHtml = o.author ? '<span style="font-size:11px;font-weight:500">' + o.author + '</span>' : '';
-      const matchHtml = o.home + (o.away ? ' vs ' + o.away : '') + '<br><span style="font-size:10px;color:var(--muted)">' + o.play + '</span>';
-
-      let profitHtml = '-';
-      if (o.result === '中') {
-        const p = payout - o.amount;
-        profitHtml = '<span class="profit">+¥' + p.toFixed(2) + '</span>';
-      } else if (o.result === '未中') {
-        profitHtml = '<span class="loss">-¥' + o.amount.toFixed(2) + '</span>';
-      } else if (o.result === '取消') {
-        profitHtml = '<span style="color:var(--muted)">¥0</span>';
-      }
-
-      let resultHtml = '';
       if (isOrderMode && o.result === '待结算') {
         resultHtml = '<select style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:2px 4px;color:var(--text);font-size:11px" onchange="updateResult(' + o.id + ',this.value)">'
           + '<option value="待结算" selected>⏳ 待结算</option>'

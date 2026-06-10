@@ -640,6 +640,9 @@ async function loadOrders() {
 
       const delBtn = isOrderMode ? '<td style="text-align:right;vertical-align:middle"><span class="del-btn" onclick="deleteOrder(' + o.id + ')">✕</span></td>' : '';
 
+      const authorHtml = o.author ? '<span style="font-weight:500">' + o.author + '</span>' : '';
+      const matchHtml = o.home + (o.away ? ' vs ' + o.away : '') + '<br><span style="font-size:10px;color:var(--muted)">' + o.play + '</span>';
+
       html += '<tr>'
         + '<td>' + authorHtml + '</td>'
         + '<td style="font-size:11px">' + matchHtml + '</td>'

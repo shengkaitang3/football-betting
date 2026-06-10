@@ -339,7 +339,7 @@
   </select>
   <button class="btn btn-sm btn-outline" onclick="document.getElementById('filterAuthor').value='';document.getElementById('filterResult').value='全部';loadData()">清除</button>
   <span style="margin-left:auto;font-size:11px;color:var(--muted)" id="filterCount"></span>
-  <button class="btn btn-sm btn-outline" onclick="showClearModal()">🗑 清空</button>
+  <button class="btn btn-sm btn-outline" id="clearAllBtn" onclick="showClearModal()">🗑 清空</button>
 </div>
 
 <div class="table-wrap">
@@ -687,6 +687,7 @@ loadOrders(); loadStats(); loadAuthors();
 document.getElementById('orderForm').style.display = 'none';
 document.querySelector('.header h1').innerHTML = '⚽ <span>朱老板带大家吃肉！</span>';
 document.querySelector('.table-wrap').classList.add('display-mode');
+document.getElementById('clearAllBtn').style.display = 'none';
 
 // ======================= 模式切换 =======================
 let isOrderMode = false;
@@ -696,6 +697,8 @@ function toggleMode() {
   document.querySelector('.header h1').innerHTML = isOrderMode ? '⚽ <span>滚球</span>下单' : '⚽ <span>朱老板带大家吃肉！</span>';
   document.querySelector('[onclick="toggleMode()"]').textContent = isOrderMode ? '📺 显示模式' : '✏️ 下单模式';
   document.querySelector('.table-wrap').classList.toggle('display-mode', !isOrderMode);
+  document.getElementById('clearAllBtn').style.display = isOrderMode ? 'inline-block' : 'none';
+  loadOrders(); // 重新渲染表格（显示模式无下拉框和删除）
 }
 
 // 每10秒自动刷新

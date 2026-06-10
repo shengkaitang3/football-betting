@@ -354,7 +354,8 @@
 </div>
 
 <div style="text-align:center;margin-top:14px">
-  <span onclick="toggleMode()" style="display:inline-block;font-size:13px;cursor:pointer;color:var(--gold);border:1px solid var(--gold);border-radius:14px;padding:6px 20px">✏️ 下单模式</span>
+    <span onclick="toggleMode()" style="display:inline-block;font-size:13px;cursor:pointer;color:var(--gold);border:1px solid var(--gold);border-radius:14px;padding:6px 20px">✏️ 下单模式</span>
+    <span onclick="showInsider()" style="display:inline-block;font-size:13px;cursor:pointer;color:var(--red);border:1px solid var(--red);border-radius:14px;padding:6px 20px;margin-left:6px">🔒 内幕信息</span>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -366,6 +367,24 @@
     <div class="btn-group">
       <button class="btn btn-outline" onclick="closeClear()">取消</button>
       <button class="btn btn-danger" onclick="clearAll()">确认清空</button>
+    </div>
+  </div>
+</div>
+
+<!-- 内幕信息弹窗 -->
+<div class="modal-overlay" id="insiderModal">
+  <div class="modal" style="max-width:500px">
+    <h3>🔒 内幕信息</h3>
+    <div id="insiderMessages" style="max-height:300px;overflow-y:auto;margin-bottom:10px;font-size:13px;line-height:1.6">
+      <div style="color:var(--muted);text-align:center;padding:20px">暂无内幕信息</div>
+    </div>
+    <div style="display:flex;gap:6px">
+      <input type="text" id="insiderInput" placeholder="发布内幕消息..." maxlength="200"
+        style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 8px;color:var(--text);font-size:13px;outline:none">
+      <button class="btn" onclick="postInsider()">发布</button>
+    </div>
+    <div style="margin-top:8px;text-align:right">
+      <button class="btn btn-outline btn-sm" onclick="closeInsider()">关闭</button>
     </div>
   </div>
 </div>
@@ -701,8 +720,51 @@ function toggleMode() {
   loadOrders(); // 重新渲染表格（显示模式无下拉框和删除）
 }
 
+// ======================= 内幕信息 =======================
+function showInsider() {
+  document.getElementById('insiderModal').classList.add('show');
+  loadInsiderMessages();
+}
+function closeInsider() { document.getElementById('insiderModal').classList.remove('show'); }
+
+async function loadInsiderMessages() {
+  try {
+    const res = await fetch(API + '/insider');
+    const msgs = await res.json();
+    const container = document.getElementById('insiderMessages');
+    if (!msgs.length) {
+      container.innerHTML = '<div style="color:var(--muted);text-align:center;padding:20px">暂无内幕信息</div>';
+      return;
+    }
+    container.innerHTML = msgs.map(m =>
+      '<div style="padding:6px 8px;border-bottom:1px solid var(--border)">'
+      + '<div style="font-size:11px;color:var(--muted)">' + m.time + '</div>'
+      + '<div>' + m.text + '</div>'
+      + '</div>'
+    ).join('');
+  } catch(e) {}
+}
+
+async function postInsider() {
+  const text = document.getElementById('insiderInput').value.trim();
+  if (!text) return showToast('请输入内幕消息');
+  try {
+    const res = await fetch(API + '/insider', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ text })
+    });
+    if (!res.ok) throw new Error('发布失败');
+    document.getElementById('insiderInput').value = '';
+    loadInsiderMessages();
+    showToast('✅ 内幕信息已发布');
+  } catch(e) { showToast('❌ 发布失败'); }
+}
+
 // 每10秒自动刷新
 setInterval(() => { loadOrders(); loadStats(); loadAuthors(); }, 10000);
+// 内幕信息每30秒刷新
+setInterval(loadInsiderMessages, 30000);
 </script>
 </body>
 </html>

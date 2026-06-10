@@ -120,6 +120,34 @@ app.delete('/api/orders', (req, res) => {
   res.json({ ok: true });
 });
 
+const INSIDER_FILE = path.join(__dirname, 'insider.json');
+function loadInsider() {
+  try { return JSON.parse(fs.readFileSync(INSIDER_FILE, 'utf8')); } catch { return []; }
+}
+function saveInsider(msgs) {
+  fs.writeFileSync(INSIDER_FILE, JSON.stringify(msgs, null, 2));
+}
+
+app.get('/api/insider', (req, res) => {
+  const msgs = loadInsider();
+  res.json(msgs.slice(-50).reverse());
+});
+
+app.post('/api/insider', (req, res) => {
+  const { text } = req.body;
+  if (!text) return res.status(400).json({ error: '请输入内容' });
+  const msgs = loadInsider();
+  const msg = {
+    id: Date.now(),
+    text,
+    time: new Date().toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }),
+    createdAt: new Date().toISOString()
+  };
+  msgs.push(msg);
+  saveInsider(msgs);
+  res.json(msg);
+});
+
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`⚽ 竞彩足球服务运行中: http://0.0.0.0:${PORT}`);
 });

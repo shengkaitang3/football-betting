@@ -136,6 +136,20 @@
   .match-card .time { font-size: 10px; color: var(--gold); }
   .match-card.selected { border-color: var(--accent); background: rgba(0,212,170,0.1); }
 
+  /* 显示模式表格更大 */
+  .display-mode td { font-size: 15px; padding: 12px 10px; }
+  .display-mode th { font-size: 14px; }
+
+  .preset-match {
+    display: flex; gap: 8px; align-items: center;
+    background: var(--card2); border-radius: 6px; padding: 5px 10px;
+    margin-bottom: 3px; border: 1px solid var(--border);
+    cursor: pointer; font-size: 12px; transition: border-color 0.15s;
+  }
+  .preset-match:hover { border-color: var(--accent); }
+  .preset-match.selected { border-color: var(--accent); background: rgba(0,212,170,0.1); }
+  .preset-match span { white-space: nowrap; }
+
   .play-category {
     display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px;
   }
@@ -182,42 +196,103 @@
 <div class="container">
 
 <div class="header">
-  <h1>⚽ <span>滚球</span>下单</h1>
-  <div class="stats" id="statsBar">
+    <h1>⚽ <span>滚球</span>下单</h1>
+    <div class="stats" id="statsBar">
     <div><span class="num" id="sTotal">-</span><span class="label">单数</span></div>
     <div><span class="num" id="sWinRate">-</span><span class="label">胜率</span></div>
     <div><span class="num" id="sProfit">-</span><span class="label">盈亏</span></div>
   </div>
 </div>
 
-<div class="form-card">
+<div class="form-card" id="orderForm" style="display:none">
   <h2>📝 新订单</h2>
 
-  <!-- 名字选择 -->
+  <!-- 名字填写 -->
   <div class="name-panel">
     <span class="current-label">谁下的：</span>
-    <span class="name-chip" onclick="setName('圣凯')">圣凯</span>
-    <span class="name-chip" onclick="setName('')">➕ 自定义</span>
-    <input type="text" id="authorName" placeholder="名字" maxlength="10"
-      style="width:80px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:12px;outline:none;display:none"
-      oninput="document.getElementById('currentName').textContent=this.value">
+    <input type="text" id="authorName" placeholder="必填：填下单人名字" maxlength="10" required
+      style="width:120px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:12px;outline:none">
   </div>
 
-  <!-- 比赛快速选择 -->
+  <!-- 自定义比赛 -->
   <div style="margin-bottom:10px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-      <span style="font-size:11px;color:var(--muted)">比赛选择</span>
-      <span style="font-size:10px;color:var(--gold)" id="matchLabel">即将开赛</span>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+      <span style="font-size:11px;color:var(--muted)">主队</span>
+      <span style="font-size:11px;color:var(--muted)">客队</span>
+      <span style="margin-left:auto;font-size:10px;color:var(--gold);cursor:pointer" onclick="togglePresetMatches()">📅 选比赛</span>
     </div>
-    <div id="matchSelector">
-      <!-- 预置热门比赛 -->
-      <div class="match-card selected" data-match="中国 vs 日本" data-league="2026世界杯亚洲外围赛" onclick="selectMatch(this)">
-        <div>
-          <div class="teams">🇨🇳 中国 vs 日本 🇯🇵</div>
-          <div class="league">2026世界杯亚洲外围赛</div>
-        </div>
-        <div class="time">08:00</div>
-      </div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <input type="text" id="homeTeam" placeholder="主队" maxlength="20"
+        style="width:80px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 8px;color:var(--text);font-size:13px;outline:none"
+        oninput="updateMatch()">
+      <span style="color:var(--muted);font-size:13px">vs</span>
+      <input type="text" id="awayTeam" placeholder="客队" maxlength="20"
+        style="width:80px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 8px;color:var(--text);font-size:13px;outline:none"
+        oninput="updateMatch()">
+    </div>
+  </div>
+
+  <!-- 预置比赛（默认隐藏） -->
+  <div id="presetMatches" style="display:none;margin-bottom:10px">
+    <div style="font-size:11px;color:var(--muted);margin-bottom:4px">2026世界杯 小组赛第1轮</div>
+    <div class="preset-match" data-home="墨西哥" data-away="南非" onclick="pickMatch(this)">
+      <span style="color:var(--gold);font-size:10px">6/12 03:00</span>
+      <span>墨西哥 vs 南非</span>
+      <span style="font-size:10px;color:var(--muted)">揭幕战</span>
+    </div>
+    <div class="preset-match" data-home="韩国" data-away="捷克" onclick="pickMatch(this)">
+      <span style="color:var(--gold);font-size:10px">6/12 10:00</span>
+      <span>韩国 vs 捷克</span>
+    </div>
+    <div class="preset-match" data-home="加拿大" data-away="波黑" onclick="pickMatch(this)">
+      <span style="color:var(--gold);font-size:10px">6/13 03:00</span>
+      <span>加拿大 vs 波黑</span>
+    </div>
+    <div class="preset-match" data-home="美国" data-away="巴拉圭" onclick="pickMatch(this)">
+      <span style="color:var(--gold);font-size:10px">6/13 09:00</span>
+      <span>美国 vs 巴拉圭</span>
+    </div>
+    <div class="preset-match" data-home="卡塔尔" data-away="瑞士" onclick="pickMatch(this)">
+      <span style="color:var(--gold);font-size:10px">6/14 03:00</span>
+      <span>卡塔尔 vs 瑞士</span>
+    </div>
+    <div class="preset-match" data-home="巴西" data-away="摩纳哥" onclick="pickMatch(this)">
+      <span style="color:var(--gold);font-size:10px">6/14 06:00</span>
+      <span>巴西 vs 摩纳哥</span>
+      <span style="font-size:10px;color:var(--red)">🔥焦点战</span>
+    </div>
+    <div class="preset-match" data-home="海地" data-away="苏格兰" onclick="pickMatch(this)">
+      <span style="color:var(--gold);font-size:10px">6/14 09:00</span>
+      <span>海地 vs 苏格兰</span>
+    </div>
+    <div class="preset-match" data-home="德国" data-away="库拉索" onclick="pickMatch(this)">
+      <span style="color:var(--gold);font-size:10px">6/15 17:00</span>
+      <span>德国 vs 库拉索</span>
+    </div>
+    <div class="preset-match" data-home="荷兰" data-away="日本" onclick="pickMatch(this)">
+      <span style="color:var(--gold);font-size:10px">6/15 20:00</span>
+      <span>荷兰 vs 日本</span>
+      <span style="font-size:10px;color:var(--red)">🔥强强对话</span>
+    </div>
+    <div class="preset-match" data-home="科特迪瓦" data-away="厄瓜多尔" onclick="pickMatch(this)">
+      <span style="color:var(--gold);font-size:10px">6/15 23:00</span>
+      <span>科特迪瓦 vs 厄瓜多尔</span>
+    </div>
+    <div class="preset-match" data-home="瑞典" data-away="突尼斯" onclick="pickMatch(this)">
+      <span style="color:var(--gold);font-size:10px">6/16 02:00</span>
+      <span>瑞典 vs 突尼斯</span>
+    </div>
+    <div class="preset-match" data-home="西班牙" data-away="佛得角" onclick="pickMatch(this)">
+      <span style="color:var(--gold);font-size:10px">6/16 16:00</span>
+      <span>西班牙 vs 佛得角</span>
+    </div>
+    <div class="preset-match" data-home="比利时" data-away="埃及" onclick="pickMatch(this)">
+      <span style="color:var(--gold);font-size:10px">6/16 19:00</span>
+      <span>比利时 vs 埃及</span>
+    </div>
+    <div class="preset-match" data-home="沙特" data-away="乌拉圭" onclick="pickMatch(this)">
+      <span style="color:var(--gold);font-size:10px">6/16 22:00</span>
+      <span>沙特 vs 乌拉圭</span>
     </div>
   </div>
 
@@ -226,13 +301,11 @@
     <span style="font-size:11px;color:var(--muted)">玩法大类</span>
   </div>
   <div class="play-category" id="playCategory">
-    <span class="play-cat-btn active" data-cat="rangqiu" onclick="switchCategory('rangqiu')">让球</span>
+    <span class="play-cat-btn active" data-cat="common" onclick="switchCategory('common')">常用</span>
+    <span class="play-cat-btn" data-cat="rangqiu" onclick="switchCategory('rangqiu')">让球盘</span>
     <span class="play-cat-btn" data-cat="daxiao" onclick="switchCategory('daxiao')">大小球</span>
-    <span class="play-cat-btn" data-cat="duying" onclick="switchCategory('duying')">独赢</span>
-    <span class="play-cat-btn" data-cat="banshang" onclick="switchCategory('banshang')">上半场</span>
-    <span class="play-cat-btn" data-cat="bodan" onclick="switchCategory('bodan')">波胆</span>
-    <span class="play-cat-btn" data-cat="jinqiu" onclick="switchCategory('jinqiu')">总进球</span>
-    <span class="play-cat-btn" data-cat="other" onclick="switchCategory('other')">其他</span>
+    <span class="play-cat-btn" data-cat="score" onclick="switchCategory('score')">比分</span>
+    <span class="play-cat-btn" data-cat="half" onclick="switchCategory('half')">半全场</span>
   </div>
 
   <!-- 具体选项 -->
@@ -255,14 +328,16 @@
 </div>
 
 <div class="filter-bar">
-  <input type="date" id="filterDate" onchange="loadOrders()">
-  <select id="filterResult" onchange="loadOrders()">
+  <select id="filterAuthor" onchange="loadData()" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:12px;outline:none">
+    <option value="">全部</option>
+  </select>
+  <select id="filterResult" onchange="loadData()" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:12px;outline:none">
     <option value="全部">全部</option>
     <option value="待结算">⏳ 待结算</option>
     <option value="中">✅ 已中</option>
     <option value="未中">❌ 未中</option>
   </select>
-  <button class="btn btn-sm btn-outline" onclick="document.getElementById('filterDate').value='';document.getElementById('filterResult').value='全部';loadOrders()">清除</button>
+  <button class="btn btn-sm btn-outline" onclick="document.getElementById('filterAuthor').value='';document.getElementById('filterResult').value='全部';loadData()">清除</button>
   <span style="margin-left:auto;font-size:11px;color:var(--muted)" id="filterCount"></span>
   <button class="btn btn-sm btn-outline" onclick="showClearModal()">🗑 清空</button>
 </div>
@@ -270,12 +345,16 @@
 <div class="table-wrap">
   <table>
     <thead><tr>
-      <th>时间</th><th>谁</th><th>比赛</th><th>玩法</th><th>赔率</th><th>金额</th><th>盈亏</th><th>结果</th><th></th>
+      <th>谁</th><th>比赛</th><th>赔率</th><th>金额</th><th></th>
     </tr></thead>
     <tbody id="orderBody"></tbody>
   </table>
 </div>
 
+</div>
+
+<div style="text-align:center;margin-top:14px">
+  <span onclick="toggleMode()" style="display:inline-block;font-size:13px;cursor:pointer;color:var(--gold);border:1px solid var(--gold);border-radius:14px;padding:6px 20px">✏️ 下单模式</span>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -295,67 +374,61 @@
 const API = '/api';
 
 // ======================= 数据定义 =======================
-const PLAY_OPTIONS = {
-  rangqiu: ['中国+2/2.5', '中国+2', '中国+2.5', '日本-2/2.5', '日本-2', '日本-2.5'],
-  daxiao: ['大2.5/3', '大2.5', '大3/3.5', '小3', '小3/3.5', '小2.5/3', '小2.5'],
-  duying: ['中国 胜', '和局', '日本 胜'],
-  banshang: [
-    '中国+1(上)', '日本-1(上)', '中国+0.5/1(上)', '日本-0.5/1(上)',
-    '大1/1.5(上)', '小1/1.5(上)', '大1.5(上)', '小1.5(上)',
-    '中国胜(上)', '和局(上)', '日本胜(上)'
+// 用 {H} 代表主队, {A} 代表客队，渲染时自动替换
+const PLAY_TEMPLATES = {
+  // 1. 常用/独赢
+  common: [
+    '{H} 胜', '平局', '{A} 胜',
+    '--- 双方进球 ---', '双方都进球-是', '双方都进球-否'
   ],
-  bodan: [
-    '1-0', '2-0', '2-1', '3-0', '3-1', '3-2',
-    '0-0', '1-1', '2-2',
-    '0-1', '0-2', '1-2', '0-3', '1-3', '2-3',
-    '其他比分'
+  // 2. 让球盘
+  rangqiu: [
+    '--- 全场让球 ---', '{H}(-1) 胜', '让球平', '{A}(+1) 胜',
+    '--- 亚洲让球 ---', '{H}(-0.5)', '{A}(+0.5)', '{H}(-1.0)', '{A}(+1.0)'
   ],
-  jinqiu: ['0-1球', '2-3球', '4-6球', '7+球', '0-1球(上)', '2-3球(上)', '3+球(上)'],
-  other: [
-    '双方进球-是', '双方进球-否',
-    '单', '双',
-    '中国大0.5', '中国小0.5',
-    '日本大2.5', '日本小2.5',
-    '15分盘口-让球', '15分盘口-大小', '15分盘口-独赢',
-    '球队进球-中国大0.5', '球队进球-中国小0.5',
-    '球队进球-日本大2.5', '球队进球-日本小2.5'
+  // 3. 大小球
+  daxiao: [
+    '大0.5', '小0.5', '大1.5', '小1.5',
+    '大2.5', '小2.5', '大3.5', '小3.5', '大4.5', '小4.5'
+  ],
+  // 4. 比分/进球数
+  score: [
+    '--- 准确比分 ---',
+    '1-0', '2-0', '2-1', '3-0', '3-1', '3-2', '4-0', '4-1', '4-2', '5-0', '胜其他',
+    '0-0', '1-1', '2-2', '3-3', '平其他',
+    '0-1', '0-2', '1-2', '0-3', '1-3', '2-3', '0-4', '1-4', '2-4', '0-5', '负其他',
+    '--- 总进球数 ---', '0球', '1球', '2球', '3球', '4球', '5球', '6球', '7+球'
+  ],
+  // 5. 半全场/其他
+  half: [
+    '--- 半全场 ---', '{H}-{H}', '{H}-平', '{H}-{A}', '平-{H}', '平-平', '平-{A}', '{A}-{H}', '{A}-平', '{A}-{A}',
+    '--- 半场胜平负 ---', '半场 {H} 胜', '半场 平', '半场 {A} 胜',
+    '--- 半场大小球 ---', '半场大1.5', '半场小1.5',
+    '--- 角球 ---', '角球大X.5', '角球小X.5'
   ]
 };
 
 const CATEGORY_NAMES = {
-  rangqiu: '让球', daxiao: '大小球', duying: '独赢',
-  banshang: '上半场', bodan: '波胆', jinqiu: '总进球', other: '其他'
+  common: '常用/独赢', rangqiu: '让球盘', daxiao: '大小球', score: '比分/进球数', half: '半全场/其他'
 };
 
 // ======================= 状态 =======================
-let currentCategory = 'rangqiu';
 let selectedOption = '';
-let currentMatch = '中国 vs 日本';
+let currentMatch = '';
 
 // ======================= 初始化 =======================
 document.getElementById('orderDate').value = new Date().toISOString().slice(0,10);
 document.getElementById('betAmount').addEventListener('input', calcHint);
 document.getElementById('odds').addEventListener('input', calcHint);
-renderOptions('rangqiu');
+renderOptions('common');
 
-// ======================= 名字系统 =======================
-function setName(name) {
-  const input = document.getElementById('authorName');
-  const currentLabel = document.querySelector('.current-label');
-  if (name === '') {
-    input.style.display = 'inline-block';
-    input.focus();
-  } else {
-    input.style.display = 'none';
-    input.value = name;
-  }
-  document.querySelectorAll('.name-chip').forEach(c => c.classList.remove('active'));
-  event.target.classList.add('active');
-}
+// ======================= 初始化默认分类 =======================
+let currentCategory = 'common';
 
+// ======================= 名字获取 =======================
 function getAuthor() {
   const val = document.getElementById('authorName').value.trim();
-  return val || '匿名';
+  return val || '';
 }
 
 // ======================= 比赛选择 =======================
@@ -375,12 +448,51 @@ function switchCategory(cat) {
   renderOptions(cat);
 }
 
+function updateMatch() {
+  const h = document.getElementById('homeTeam').value.trim();
+  const a = document.getElementById('awayTeam').value.trim();
+  currentMatch = h + ' vs ' + a;
+  renderOptions(currentCategory);
+  document.querySelectorAll('.preset-match').forEach(c => c.classList.remove('selected'));
+}
+
+function togglePresetMatches() {
+  const el = document.getElementById('presetMatches');
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+}
+
+function pickMatch(el) {
+  document.getElementById('homeTeam').value = el.dataset.home;
+  document.getElementById('awayTeam').value = el.dataset.away;
+  document.querySelectorAll('.preset-match').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('presetMatches').style.display = 'none';
+  updateMatch();
+}
+
+function getTeams() {
+  const home = document.getElementById('homeTeam').value.trim();
+  const away = document.getElementById('awayTeam').value.trim();
+  return { home, away };
+}
+
+function fillTemplate(tpl, home, away) {
+  return tpl.replace(/\{H\}/g, home).replace(/\{A\}/g, away);
+}
+
 function renderOptions(cat) {
   const container = document.getElementById('playOptions');
-  const opts = PLAY_OPTIONS[cat] || [];
-  container.innerHTML = opts.map(o =>
-    `<span class="play-opt-btn" data-opt="${o}" onclick="selectOpt(this, '${o}')">${o}</span>`
-  ).join('');
+  const { home, away } = getTeams();
+  const templates = PLAY_TEMPLATES[cat] || [];
+  const opts = templates.map(t => fillTemplate(t, home, away));
+  container.innerHTML = opts.map(o => {
+    if (o.startsWith('---')) {
+      return `<div style="font-size:10px;color:var(--muted);padding:4px 2px 2px;border-bottom:1px solid var(--border);margin:2px 0;width:100%">${o.replace(/---/g,'').trim()}</div>`;
+    }
+    return `<span class="play-opt-btn" data-opt="${o}" onclick="selectOpt(this, '${o}')">${o}</span>`;
+  }).join('');
+  // 切换分类时清除已选
+  selectedOption = '';
 }
 
 function selectOpt(el, opt) {
@@ -413,6 +525,7 @@ async function addOrder() {
   if (!selectedOption) return showToast('请先选择一个具体选项（点击上面的选项按钮）');
   if (!odds || odds < 1) return showToast('赔率至少 1.0');
   if (!amount || amount < 1) return showToast('请填写金额');
+  if (!author) return showToast('请填写下单人名字');
 
   const catName = CATEGORY_NAMES[currentCategory] || '其他';
   const playLabel = catName + ' - ' + selectedOption;
@@ -440,7 +553,7 @@ async function addOrder() {
     document.querySelectorAll('.play-opt-btn').forEach(b => b.classList.remove('selected'));
     document.getElementById('calcHint').textContent = '输入金额自动算奖金';
     showToast('✅ ' + author + ' 下了 ' + playLabel + ' ¥' + amount);
-    loadOrders(); loadStats();
+    loadOrders(); loadStats(); loadAuthors();
   } catch(e) { showToast('❌ 添加失败: ' + e.message); }
 }
 
@@ -452,7 +565,7 @@ async function updateResult(id, result) {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ result })
     });
-    loadOrders(); loadStats();
+    loadOrders(); loadStats(); loadAuthors();
   } catch(e) { showToast('更新失败'); }
 }
 
@@ -460,16 +573,32 @@ async function deleteOrder(id) {
   if (!confirm('删除这条订单？')) return;
   try {
     await fetch(API + '/orders/' + id, { method: 'DELETE' });
-    loadOrders(); loadStats();
+    loadOrders(); loadStats(); loadAuthors();
   } catch(e) { showToast('删除失败'); }
 }
 
+async function loadAuthors() {
+  try {
+    const res = await fetch(API + '/orders');
+    const orders = await res.json();
+    const names = [...new Set(orders.map(o => o.author).filter(Boolean))];
+    const sel = document.getElementById('filterAuthor');
+    const current = sel.value;
+    sel.innerHTML = '<option value="">全部</option>' + names.map(n => '<option value="' + n + '">' + n + '</option>').join('');
+    // 重建后恢复选中的值
+    if (current && names.includes(current)) {
+      sel.value = current;
+    }
+  } catch(e) {}
+}
+
 async function loadOrders() {
-  const date = document.getElementById('filterDate').value;
+  const sel = document.getElementById('filterAuthor');
+  const author = sel.value;
   const result = document.getElementById('filterResult').value;
   let url = API + '/orders';
   const params = [];
-  if (date) params.push('date=' + date);
+  if (author) params.push('author=' + encodeURIComponent(author));
   if (result && result !== '全部') params.push('result=' + encodeURIComponent(result));
   if (params.length) url += '?' + params.join('&');
 
@@ -478,7 +607,7 @@ async function loadOrders() {
     const orders = await res.json();
     const tbody = document.getElementById('orderBody');
     if (orders.length === 0) {
-      tbody.innerHTML = '<tr class="empty-row"><td colspan="9">暂无订单 ⚽</td></tr>';
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">暂无订单 ⚽</td></tr>';
       document.getElementById('filterCount').textContent = '';
       return;
     }
@@ -508,18 +637,40 @@ async function loadOrders() {
       }
 
       const authorHtml = o.author ? '<span style="font-size:11px;font-weight:500">' + o.author + '</span>' : '';
-      const matchHtml = o.home + (o.away ? ' vs ' + o.away : '');
+      const matchHtml = o.home + (o.away ? ' vs ' + o.away : '') + '<br><span style="font-size:10px;color:var(--muted)">' + o.play + '</span>';
+
+      let profitHtml = '-';
+      if (o.result === '中') {
+        const p = payout - o.amount;
+        profitHtml = '<span class="profit">+¥' + p.toFixed(2) + '</span>';
+      } else if (o.result === '未中') {
+        profitHtml = '<span class="loss">-¥' + o.amount.toFixed(2) + '</span>';
+      } else if (o.result === '取消') {
+        profitHtml = '<span style="color:var(--muted)">¥0</span>';
+      }
+
+      let resultHtml = '';
+      if (isOrderMode && o.result === '待结算') {
+        resultHtml = '<select style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:2px 4px;color:var(--text);font-size:11px" onchange="updateResult(' + o.id + ',this.value)">'
+          + '<option value="待结算" selected>⏳ 待结算</option>'
+          + '<option value="中">✅ 中</option>'
+          + '<option value="未中">❌ 未中</option>'
+          + '<option value="取消">取消</option></select>';
+      } else if (o.result === '待结算') {
+        resultHtml = '<span class="tag tag-pending">⏳ 待结算</span>';
+      } else {
+        const cls = { '中':'tag-win','未中':'tag-lose','取消':'tag-cancel' }[o.result] || 'tag-pending';
+        resultHtml = '<span class="tag ' + cls + '">' + (o.result === '中' ? '✅ ' : o.result === '未中' ? '❌ ' : '') + o.result + '</span>';
+      }
+
+      const delBtn = isOrderMode ? '<td style="text-align:right;vertical-align:middle"><span class="del-btn" onclick="deleteOrder(' + o.id + ')">✕</span></td>' : '';
 
       html += '<tr>'
-        + '<td style="font-size:10px;color:var(--muted)">' + o.date + '</td>'
         + '<td>' + authorHtml + '</td>'
         + '<td style="font-size:11px">' + matchHtml + '</td>'
-        + '<td style="font-size:11px">' + o.play + '</td>'
-        + '<td>' + o.odds + '</td>'
-        + '<td>¥' + o.amount.toFixed(2) + '</td>'
-        + '<td>' + profitHtml + '</td>'
-        + '<td>' + resultHtml + '</td>'
-        + '<td style="text-align:right"><span class="del-btn" onclick="deleteOrder(' + o.id + ')">✕</span></td>'
+        + '<td>' + o.odds + '<br><span style="font-size:10px;color:var(--muted)">' + profitHtml + '</span></td>'
+        + '<td>¥' + o.amount.toFixed(2) + '<br><span style="font-size:10px">' + resultHtml + '</span></td>'
+        + delBtn
         + '</tr>';
     });
     tbody.innerHTML = html;
@@ -552,10 +703,20 @@ async function clearAll() {
   closeClear();
 }
 
-loadOrders(); loadStats();
+loadOrders(); loadStats(); loadAuthors();
+
+// ======================= 模式切换 =======================
+let isOrderMode = false;
+function toggleMode() {
+  isOrderMode = !isOrderMode;
+  document.getElementById('orderForm').style.display = isOrderMode ? 'block' : 'none';
+  document.querySelector('.header h1').innerHTML = isOrderMode ? '⚽ <span>滚球</span>下单' : '⚽ <span>朱老板带大家吃肉！</span>';
+  document.querySelector('[onclick="toggleMode()"]').textContent = isOrderMode ? '📺 显示模式' : '✏️ 下单模式';
+  document.querySelector('.table-wrap').classList.toggle('display-mode', !isOrderMode);
+}
 
 // 每10秒自动刷新
-setInterval(() => { loadOrders(); loadStats(); }, 10000);
+setInterval(() => { loadOrders(); loadStats(); loadAuthors(); }, 10000);
 </script>
 </body>
 </html>

@@ -18,11 +18,41 @@ function saveOrders(orders) {
   fs.writeFileSync(DATA_FILE, JSON.stringify(orders, null, 2));
 }
 
+const MATCHES_FILE = path.join(__dirname, 'matches.json');
+function loadMatches() {
+  try { return JSON.parse(fs.readFileSync(MATCHES_FILE, 'utf8')); } catch { return []; }
+}
+function saveMatches(matches) {
+  fs.writeFileSync(MATCHES_FILE, JSON.stringify(matches, null, 2));
+}
+
+app.get('/api/matches', (req, res) => {
+  res.json(loadMatches());
+});
+
+app.post('/api/matches', (req, res) => {
+  const { name, league } = req.body;
+  if (!name) return res.status(400).json({ error: '请输入比赛名称' });
+  const matches = loadMatches();
+  if (matches.find(m => m.name === name)) return res.status(400).json({ error: '比赛已存在' });
+  const match = { name, league: league || '', createdAt: new Date().toISOString() };
+  matches.push(match);
+  saveMatches(matches);
+  res.json(match);
+});
+
+app.delete('/api/matches/:name', (req, res) => {
+  let matches = loadMatches();
+  matches = matches.filter(m => m.name !== req.params.name);
+  saveMatches(matches);
+  res.json({ ok: true });
+});
+
 app.get('/api/orders', (req, res) => {
   const orders = loadOrders();
-  const { date, result } = req.query;
+  const { author, result } = req.query;
   let filtered = [...orders];
-  if (date) filtered = filtered.filter(o => o.date === date);
+  if (author) filtered = filtered.filter(o => o.author && o.author.includes(author));
   if (result && result !== '全部') filtered = filtered.filter(o => o.result === result);
   filtered.sort((a, b) => b.id - a.id);
   res.json(filtered);
@@ -30,13 +60,17 @@ app.get('/api/orders', (req, res) => {
 
 app.get('/api/stats', (req, res) => {
   const orders = loadOrders();
-  const total = orders.length;
-  const won = orders.filter(o => o.result === '中').length;
-  const lost = orders.filter(o => o.result === '未中').length;
+  const { author, result } = req.query;
+  let filtered = [...orders];
+  if (author) filtered = filtered.filter(o => o.author && o.author.includes(author));
+  if (result && result !== '全部') filtered = filtered.filter(o => o.result === result);
+  const total = filtered.length;
+  const won = filtered.filter(o => o.result === '中').length;
+  const lost = filtered.filter(o => o.result === '未中').length;
   const settled = won + lost;
   const winRate = settled > 0 ? (won / settled * 100).toFixed(1) : 0;
   let profit = 0;
-  orders.forEach(o => {
+  filtered.forEach(o => {
     const payout = o.odds * o.amount;
     if (o.result === '中') profit += (payout - o.amount);
     else if (o.result === '未中') profit -= o.amount;

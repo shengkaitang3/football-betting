@@ -680,6 +680,11 @@ async function clearAll() {
 
 loadOrders(); loadStats(); loadAuthors();
 
+// 默认进入显示模式
+document.getElementById('orderForm').style.display = 'none';
+document.querySelector('.header h1').innerHTML = '⚽ <span>朱老板带大家吃肉！</span>';
+document.querySelector('.table-wrap').classList.add('display-mode');
+
 // ======================= 模式切换 =======================
 let isOrderMode = false;
 function toggleMode() {

@@ -13,7 +13,6 @@
             position: sticky; top: 0; z-index: 50;
         }
         .top-nav .title { font-weight: 600; font-size: 14px; }
-
         .match-tabs {
             background: #eaeaea; border-bottom: 1px solid #ddd;
             display: flex; overflow-x: auto; padding: 6px 10px;
@@ -27,98 +26,40 @@
         .match-tabs span.active {
             background: #0a2016; color: white; border-color: #0a2016; font-weight: 600;
         }
-
-        .screenshot-wrap {
-            max-width: 480px; margin: 0 auto; min-height: 100vh;
-        }
-        .screenshot-wrap .screenshot-img {
-            width: 100%; display: block; height: auto;
-        }
-
-        .loading-tip {
-            text-align: center; padding: 40px 20px; color: #999; font-size: 13px;
-        }
-        .loading-tip .spinner {
-            display: inline-block; width: 24px; height: 24px;
-            border: 3px solid #eee; border-top-color: #0a2016;
-            border-radius: 50%; animation: spin 0.8s linear infinite;
-            margin-bottom: 8px;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
+        .screenshot-wrap { max-width: 480px; margin: 0 auto; min-height: 100vh; }
+        .screenshot-wrap .screenshot-img { width: 100%; display: block; height: auto; }
         .bottom-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: rgba(0,0,0,0.7); color: white; text-align: center;
-            padding: 6px; font-size: 11px; backdrop-filter: blur(10px);
-            z-index: 50;
+            padding: 6px; font-size: 11px; backdrop-filter: blur(10px); z-index: 50;
         }
     </style>
 </head>
 <body>
-
     <div class="top-nav">
         <span class="title">📸 赔率截图</span>
-        <span style="font-size:11px;opacity:0.6" id="statusText">就绪</span>
+        <span style="font-size:11px;opacity:0.6">即点即看</span>
     </div>
-
     <div class="match-tabs" id="matchTabs">
-        <span class="active" data-img="champion.jpg" onclick="switchTab(this)">🏆 冠军</span>
-        <span data-img="mex-s.jpg" onclick="switchTab(this)">🇲🇽 墨西哥 vs 南非</span>
-        <span data-img="kor-c.jpg" onclick="switchTab(this)">🇰🇷 韩国 vs 捷克</span>
+        <span class="active" data-key="champion" onclick="switchTab(this)">🏆 冠军</span>
+        <span data-key="mex" onclick="switchTab(this)">🇲🇽 墨西哥 vs 南非</span>
+        <span data-key="kor" onclick="switchTab(this)">🇰🇷 韩国 vs 捷克</span>
     </div>
-
-    <div class="screenshot-wrap" id="screenshotWrap">
-        <div class="loading-tip" id="loadingTip">
-            <div class="spinner"></div>
-            <div>加载中...</div>
-        </div>
-        <img id="oddsImage" class="screenshot-img" src="champion.jpg" alt="赔率截图" style="display:none" onload="onImageLoad()" onerror="onImageError()">
+    <div class="screenshot-wrap">
+        <img id="oddsImage" class="screenshot-img" alt="赔率截图">
     </div>
+    <div class="bottom-bar">📸 截图模式 · 点上方标签切换</div>
 
-    <div class="bottom-bar">
-        📸 截图模式 · 点上方标签切换
-    </div>
-
-    <script>
-        // 预加载所有图片
-        function preloadImages() {
-            const imgs = ['champion.jpg', 'mex-s.jpg', 'kor-c.jpg'];
-            imgs.forEach(src => {
-                const img = new Image();
-                img.src = src;
-            });
-        }
-
-        function switchTab(el) {
-            document.querySelectorAll('#matchTabs span').forEach(s => s.classList.remove('active'));
-            el.classList.add('active');
-            
-            const img = document.getElementById('oddsImage');
-            const tip = document.getElementById('loadingTip');
-            
-            img.style.display = 'none';
-            tip.style.display = 'block';
-            document.getElementById('statusText').textContent = '加载中...';
-            
-            img.src = el.dataset.img;
-        }
-
-        function onImageLoad() {
-            document.getElementById('oddsImage').style.display = 'block';
-            document.getElementById('loadingTip').style.display = 'none';
-            document.getElementById('statusText').textContent = '就绪';
-        }
-
-        function onImageError() {
-            document.getElementById('loadingTip').innerHTML = '<div style="color:#999">⚠️ 图片加载失败，请刷新重试</div>';
-            document.getElementById('statusText').textContent = '加载失败';
-        }
-
-        // 页面加载后预加载其他图片
-        window.onload = function() {
-            setTimeout(preloadImages, 500);
-        };
-    </script>
-
+<script>
+function switchTab(el) {
+    document.querySelectorAll('#matchTabs span').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('oddsImage').src = window[el.dataset.key];
+}
+window.onload = function() {
+    document.getElementById('oddsImage').src = champion;
+};
+</script>
+<script src="image_data.js"></script>
 </body>
 </html>

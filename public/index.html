@@ -7,16 +7,16 @@
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   :root {
-    --bg: #0f0f1a; --card: #1a1a2e; --card2: #16213e;
-    --accent: #00d4aa; --red: #ff4757; --green: #2ed573; --gold: #ffa502;
-    --text: #e8e8f0; --muted: #8888a0; --border: #2a2a4a;
+    --bg: #f3f4f6; --card: #ffffff; --card2: #f9fafb;
+    --accent: #2563eb; --red: #dc2626; --green: #16a34a; --gold: #d97706;
+    --text: #111827; --muted: #6b7280; --border: #e5e7eb;
   }
   body {
     background: var(--bg); color: var(--text);
     font-family: -apple-system, 'Microsoft YaHei UI', sans-serif;
-    padding: 12px; min-height: 100vh;
+    padding: 0; min-height: 100vh;
   }
-  .container { max-width: 800px; margin: 0 auto; }
+  .container { max-width: 480px; margin: 0 auto; padding: 10px; }
 
   .header {
     display: flex; justify-content: space-between; align-items: center;
@@ -26,21 +26,21 @@
   .header h1 span { color: var(--accent); }
 
   .stats {
-    display: flex; gap: 8px; font-size: 12px; flex-wrap: wrap;
+    display: flex; gap: 6px; font-size: 11px; flex-wrap: wrap;
   }
   .stats div {
-    background: var(--card); padding: 6px 12px; border-radius: 8px;
-    border: 1px solid var(--border); text-align: center;
+    background: var(--card); padding: 4px 10px; border-radius: 8px;
+    border: 1px solid var(--border); text-align: center; min-width: 50px;
   }
-  .stats .num { font-size: 16px; font-weight: bold; display: block; }
-  .stats .label { font-size: 10px; color: var(--muted); }
+  .stats .num { font-size: 14px; font-weight: bold; display: block; }
+  .stats .label { font-size: 9px; color: var(--muted); }
   .profit { color: var(--green); } .loss { color: var(--red); }
 
   .form-card {
-    background: var(--card); border-radius: 12px; padding: 14px;
-    border: 1px solid var(--border); margin-bottom: 14px;
+    background: var(--card); border-radius: 12px; padding: 12px;
+    border: 1px solid var(--border); margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
-  .form-card h2 { font-size: 14px; margin-bottom: 12px; color: var(--accent); display: flex; align-items: center; gap: 6px; }
+  .form-card h2 { font-size: 13px; margin-bottom: 10px; color: var(--text); display: flex; align-items: center; gap: 6px; font-weight: 600; }
 
   .form-row {
     display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;
@@ -74,19 +74,19 @@
     display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px;
   }
   .filter-bar input, .filter-bar select {
-    background: var(--card); border: 1px solid var(--border); border-radius: 6px;
-    padding: 5px 8px; color: var(--text); font-size: 12px; outline: none;
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 10px; color: var(--text); font-size: 12px; outline: none;
   }
 
   .table-wrap {
-    background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow-x: auto;
+    background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   }
-  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  table { width: 100%; border-collapse: collapse; }
   th {
-    background: var(--card2); padding: 8px 6px; text-align: left; color: var(--muted);
+    background: var(--card2); padding: 8px 8px; text-align: left; color: var(--muted);
     font-weight: 500; white-space: nowrap; position: sticky; top: 0; font-size: 11px;
   }
-  td { padding: 8px 6px; border-top: 1px solid var(--border); white-space: nowrap; }
+  td { padding: 8px 8px; border-top: 1px solid var(--border); white-space: nowrap; }
   .tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 500; }
   .tag-win { background: rgba(46,213,115,0.2); color: var(--green); }
   .tag-lose { background: rgba(255,71,87,0.2); color: var(--red); }
@@ -154,31 +154,46 @@
     display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px;
   }
   .play-cat-btn {
-    background: var(--bg); border: 1px solid var(--border); border-radius: 14px;
-    padding: 4px 12px; font-size: 11px; cursor: pointer; color: var(--muted);
-    transition: all 0.2s;
+    background: var(--card2); border: 1px solid var(--border); border-radius: 16px;
+    padding: 5px 14px; font-size: 12px; cursor: pointer; color: var(--muted);
+    transition: all 0.2s; font-weight: 500;
   }
-  .play-cat-btn.active { background: var(--accent); color: #0f0f1a; border-color: var(--accent); font-weight: 600; }
+  .play-cat-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
   .play-options {
-    display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px;
+    display: grid; gap: 6px; margin-bottom: 6px;
   }
+  .play-cat-2col { grid-template-columns: 1fr 1fr; }
+  .play-cat-3col { grid-template-columns: 1fr 1fr 1fr; }
+  .play-cat-4col { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .play-cat-1col { grid-template-columns: 1fr; }
+
   .play-opt-btn {
-    background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
-    padding: 5px 10px; font-size: 12px; cursor: pointer; color: var(--text);
-    transition: all 0.15s;
+    background: var(--card2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 8px 6px; cursor: pointer; color: var(--text); text-align: center;
+    transition: all 0.15s; display: flex; flex-direction: column; gap: 2px;
+    user-select: none;
   }
+  .play-opt-btn .opt-name { font-size: 11px; color: var(--muted); }
+  .play-opt-btn .opt-odds { font-size: 15px; font-weight: 700; color: var(--red); }
   .play-opt-btn:hover { border-color: var(--accent); }
-  .play-opt-btn.selected { border-color: var(--gold); color: var(--gold); background: rgba(255,165,2,0.1); }
+  .play-opt-btn.selected { background: #eff6ff; border-color: var(--accent); border-width: 2px; }
+  .play-opt-btn.selected .opt-odds { color: var(--accent); }
+
+  .play-section-title {
+    font-size: 11px; color: var(--muted); padding: 6px 2px 2px;
+    border-bottom: 1px solid var(--border); margin: 4px 0 2px;
+    grid-column: 1 / -1; font-weight: 500;
+  }
 
   .quick-bet {
     display: flex; gap: 8px; align-items: center; margin-top: 8px;
-    padding: 10px; background: var(--bg); border-radius: 8px; border: 1px solid var(--border);
+    padding: 10px 12px; background: var(--card2); border-radius: 10px; border: 1px solid var(--border);
   }
   .quick-bet label { font-size: 11px; color: var(--muted); white-space: nowrap; }
   .quick-bet input {
-    background: var(--card); border: 1px solid var(--border); border-radius: 6px;
-    padding: 5px 8px; color: var(--text); font-size: 13px; width: 80px; outline: none;
+    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+    padding: 7px 8px; color: var(--text); font-size: 14px; width: 70px; outline: none;
   }
   .quick-bet input:focus { border-color: var(--accent); }
 
@@ -499,13 +514,35 @@ function renderOptions(cat) {
   const { home, away } = getTeams();
   const templates = PLAY_TEMPLATES[cat] || [];
   const opts = templates.map(t => fillTemplate(t, home, away));
+  // 根据选项数量决定列数
+  let cols = 'play-cat-2col';
+  if (cat === 'common' && opts.length <= 6) cols = 'play-cat-3col';
+  else if (cat === 'score') cols = 'play-cat-4col';
+  else if (cat === 'half') cols = 'play-cat-2col';
+  container.className = 'play-options ' + cols;
+
   container.innerHTML = opts.map(o => {
     if (o.startsWith('---')) {
-      return `<div style="font-size:10px;color:var(--muted);padding:4px 2px 2px;border-bottom:1px solid var(--border);margin:2px 0;width:100%">${o.replace(/---/g,'').trim()}</div>`;
+      return `<div class="play-section-title">${o.replace(/---/g,'').trim()}</div>`;
     }
-    return `<span class="play-opt-btn" data-opt="${o}" onclick="selectOpt(this, '${o}')">${o}</span>`;
+    // 赔率数字：从选项中提取或随机生成示例赔率
+    let odds = (Math.random() * 3 + 1.2).toFixed(2);
+    // 常用选项特定赔率
+    if (o.includes('胜')) odds = '1.50';
+    else if (o === '平局') odds = '3.80';
+    else if (o.includes('是')) odds = '1.90';
+    else if (o.includes('否')) odds = '1.90';
+    else if (o.includes('大')) odds = '2.05';
+    else if (o.includes('小')) odds = '1.85';
+    else if (o.includes('-')) {
+      const parts = o.split('-');
+      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) odds = '8.00';
+    }
+    return `<span class="play-opt-btn" data-opt="${o}" onclick="selectOpt(this, '${o}')">
+      <span class="opt-name">${o}</span>
+      <span class="opt-odds">${odds}</span>
+    </span>`;
   }).join('');
-  // 切换分类时清除已选
   selectedOption = '';
 }
 

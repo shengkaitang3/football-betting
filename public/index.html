@@ -495,9 +495,7 @@ function togglePresetMatches() {
 }
 
 function pickMatch(home, away) {
-  document.getElementById('homeTeam').value = home;
-  document.getElementById('awayTeam').value = away;
-  // 高亮选中的比赛按钮
+  // 高亮选中的比赛按钮（输入框已移除，不再赋值）
   document.querySelectorAll('.preset-match').forEach(b => {
     b.style.background = '#f0f0f0';
     b.style.borderColor = 'transparent';

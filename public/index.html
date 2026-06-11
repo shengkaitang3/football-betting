@@ -27,7 +27,7 @@
             background: #0a2016; color: white; border-color: #0a2016; font-weight: 600;
         }
         .screenshot-wrap { max-width: 480px; margin: 0 auto; min-height: 100vh; }
-        .screenshot-wrap .screenshot-img { width: 100%; display: block; height: auto; }
+        .screenshot-wrap img { width: 100%; display: block; height: auto; }
         .bottom-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: rgba(0,0,0,0.7); color: white; text-align: center;
@@ -38,28 +38,25 @@
 <body>
     <div class="top-nav">
         <span class="title">📸 赔率截图</span>
-        <span style="font-size:11px;opacity:0.6">即点即看</span>
+        <span style="font-size:11px;opacity:0.6" id="statusText">加载中...</span>
     </div>
     <div class="match-tabs" id="matchTabs">
-        <span class="active" data-key="champion" onclick="switchTab(this)">🏆 冠军</span>
-        <span data-key="mex" onclick="switchTab(this)">🇲🇽 墨西哥 vs 南非</span>
-        <span data-key="kor" onclick="switchTab(this)">🇰🇷 韩国 vs 捷克</span>
+        <span class="active" data-img="champion.jpg" onclick="switchTab(this)">🏆 冠军</span>
+        <span data-img="mex-s.jpg" onclick="switchTab(this)">🇲🇽 墨西哥 vs 南非</span>
+        <span data-img="kor-c.jpg" onclick="switchTab(this)">🇰🇷 韩国 vs 捷克</span>
     </div>
     <div class="screenshot-wrap">
-        <img id="oddsImage" class="screenshot-img" alt="赔率截图">
+        <img id="oddsImage" src="champion.jpg" alt="赔率截图" style="width:100%" onload="document.getElementById('statusText').textContent='就绪'" onerror="document.getElementById('statusText').textContent='加载失败'">
     </div>
-    <div class="bottom-bar">📸 截图模式 · 点上方标签切换</div>
-
-<script>
-function switchTab(el) {
-    document.querySelectorAll('#matchTabs span').forEach(s => s.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById('oddsImage').src = window[el.dataset.key];
-}
-window.onload = function() {
-    document.getElementById('oddsImage').src = champion;
-};
-</script>
-<script src="image_data.js"></script>
+    <div class="bottom-bar">📸 截图模式</div>
+    <script>
+        function switchTab(el) {
+            document.querySelectorAll('#matchTabs span').forEach(s => s.classList.remove('active'));
+            el.classList.add('active');
+            const img = document.getElementById('oddsImage');
+            document.getElementById('statusText').textContent = '加载中...';
+            img.src = el.dataset.img;
+        }
+    </script>
 </body>
 </html>

@@ -174,7 +174,7 @@
             <!-- 赛事信息 -->
             <div class="px-4 py-2 border-b border-[#eee]">
                 <div class="text-[10px] text-gray-400" id="sheetLeague">世界杯2026(美加墨)</div>
-                <div class="text-sm font-medium" id="sheetMatch">墨西哥 v 南非</div>
+                <div class="text-sm font-medium" id="sheetMatch">墨西哥 vs 南非</div>
             </div>
 
             <!-- 下注选项 -->
@@ -226,12 +226,12 @@
                 const matchName = document.querySelector('.top-nav-title').textContent.replace('世界杯2026(美加墨) · ', '') || '墨西哥 vs 南非';
                 const parts = matchName.split(' vs ');
 
-                currentSheetData = { module, option, odds, match: parts[0] + ' v ' + (parts[1] || '') };
+                currentSheetData = { module, option, odds, match: parts[0] + ' vs ' + (parts[1] || '') };
 
                 // 填充弹窗
                 document.getElementById('sheetTitle').textContent = '足球 ' + module;
                 document.getElementById('sheetLeague').textContent = '世界杯2026(美加墨)';
-                document.getElementById('sheetMatch').textContent = parts[0] + ' v ' + (parts[1] || '');
+                document.getElementById('sheetMatch').textContent = parts[0] + ' vs ' + (parts[1] || '');
                 document.getElementById('sheetOptionName').textContent = option;
                 document.getElementById('sheetOddsDisplay').textContent = odds;
 

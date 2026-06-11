@@ -264,7 +264,10 @@
     <input type="text" id="homeTeam" placeholder="主队" oninput="updateMatch()">
     <span class="vs">vs</span>
     <input type="text" id="awayTeam" placeholder="客队" oninput="updateMatch()">
-    <span class="preset-btn" onclick="togglePresetMatches()">📅 选比赛</span>
+  </div>
+  <div style="display:flex;gap:6px;margin-bottom:6px">
+    <span class="preset-match" style="flex:1;text-align:center;font-size:12px;background:#f0f0f0;border-radius:4px;padding:5px;cursor:pointer" onclick="pickMatch('墨西哥','南非')">🇲🇽 墨西哥 vs 南非 🇿🇦</span>
+    <span class="preset-match" style="flex:1;text-align:center;font-size:12px;background:#f0f0f0;border-radius:4px;padding:5px;cursor:pointer" onclick="pickMatch('韩国','捷克')">🇰🇷 韩国 vs 捷克 🇨🇿</span>
   </div>
 
   <!-- 预置比赛（默认隐藏） -->
@@ -508,12 +511,9 @@ function togglePresetMatches() {
   el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
-function pickMatch(el) {
-  document.getElementById('homeTeam').value = el.dataset.home;
-  document.getElementById('awayTeam').value = el.dataset.away;
-  document.querySelectorAll('.preset-match').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  document.getElementById('presetMatches').style.display = 'none';
+function pickMatch(home, away) {
+  document.getElementById('homeTeam').value = home;
+  document.getElementById('awayTeam').value = away;
   updateMatch();
 }
 

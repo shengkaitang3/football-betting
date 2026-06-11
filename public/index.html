@@ -35,17 +35,18 @@
     <!-- 顶部导航 -->
     <div class="bg-[#0a2016] text-white px-4 py-3 flex items-center justify-between sticky top-0 z-50">
         <span class="text-lg">‹</span>
-        <span class="font-semibold text-sm">世界杯2026(美加墨)</span>
+        <span class="font-semibold text-sm top-nav-title">世界杯2026(美加墨)</span>
         <span class="text-lg">☆</span>
     </div>
 
-    <!-- 次级导航 -->
-    <div class="bg-[#eaeaea] border-b border-[#ddd] flex overflow-x-auto px-3 py-2 text-xs text-[#666] scrollbar-none">
-        <span class="px-3 text-[#333] font-bold border-b-2 border-[#333] pb-1">滚球</span>
-        <span class="px-3 border-l border-[#ccc]">让球&amp;大小</span>
-        <span class="px-3 border-l border-[#ccc]">波胆</span>
-        <span class="px-3 border-l border-[#ccc]">角球</span>
-        <span class="px-3 border-l border-[#ccc]">15分钟</span>
+    <!-- 比赛选择 -->
+    <div class="bg-[#eaeaea] border-b border-[#ddd] flex overflow-x-auto px-3 py-2 text-xs text-[#666] scrollbar-none" id="matchTabs">
+        <span class="px-3 text-[#333] font-bold border-b-2 border-[#333] pb-1 whitespace-nowrap" data-match="墨西哥 vs 南非" onclick="switchMatch(this)">🇲🇽 墨西哥 vs 南非</span>
+        <span class="px-3 border-l border-[#ccc] whitespace-nowrap" data-match="韩国 vs 捷克" onclick="switchMatch(this)">🇰🇷 韩国 vs 捷克</span>
+        <span class="px-3 border-l border-[#ccc] whitespace-nowrap" data-match="加拿大 vs 波黑" onclick="switchMatch(this)">🇨🇦 加拿大 vs 波黑</span>
+        <span class="px-3 border-l border-[#ccc] whitespace-nowrap" data-match="美国 vs 巴拉圭" onclick="switchMatch(this)">🇺🇸 美国 vs 巴拉圭</span>
+        <span class="px-3 border-l border-[#ccc] whitespace-nowrap" data-match="卡塔尔 vs 瑞士" onclick="switchMatch(this)">🇶🇦 卡塔尔 vs 瑞士</span>
+        <span class="px-3 border-l border-[#ccc] whitespace-nowrap" data-match="荷兰 vs 日本" onclick="switchMatch(this)">🇳🇱 荷兰 vs 日本</span>
     </div>
 
     <!-- 足球场 -->
@@ -80,8 +81,8 @@
         </div>
 
         <!-- 队名左上右上 -->
-        <div class="absolute top-2 left-3 text-white/80 text-[10px]">🇲🇽 墨西哥</div>
-        <div class="absolute top-2 right-3 text-white/80 text-[10px]">南非 🇿🇦</div>
+        <div class="absolute top-2 left-3 text-white/80 text-[10px] pitch-area-home">🇲🇽 墨西哥</div>
+        <div class="absolute top-2 right-3 text-white/80 text-[10px] pitch-area-away">南非 🇿🇦</div>
     </div>
 
     <!-- 图标菜单 -->
@@ -237,7 +238,7 @@
     </div>
 
     <script>
-        // 点击选中高亮效果（取消其他同模块的选中）
+        // 点击选中高亮效果
         document.querySelectorAll('.odds-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 const parent = this.closest('.grid');
@@ -247,6 +248,21 @@
                 this.classList.add('selected');
             });
         });
+
+        // 切换比赛
+        function switchMatch(el) {
+            document.querySelectorAll('#matchTabs span').forEach(s => {
+                s.classList.remove('text-[#333]', 'font-bold', 'border-b-2', 'border-[#333]');
+            });
+            el.classList.add('text-[#333]', 'font-bold', 'border-b-2', 'border-[#333]');
+            const match = el.dataset.match;
+            const parts = match.split(' vs ');
+            // 更新球场队名
+            document.querySelector('.pitch-area-home').textContent = '🇲🇽 ' + parts[0];
+            document.querySelector('.pitch-area-away').textContent = parts[1] + ' 🇿🇦';
+            // 更新标题
+            document.querySelector('.top-nav-title').textContent = '世界杯2026(美加墨) · ' + match;
+        }
     </script>
 
 </body>

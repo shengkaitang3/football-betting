@@ -1,793 +1,253 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>⚽ 竞彩足球下单</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    background: #f4f4f4; color: #333333; font-size: 13px;
-    -webkit-tap-highlight-color: transparent; min-height: 100vh; padding-bottom: 40px;
-  }
-  .container { max-width: 480px; margin: 0 auto; }
-
-  /* ======= 顶部导航栏 ======= */
-  .top-nav {
-    background: #433125; color: white; padding: 6px 12px; position: sticky; top: 0; z-index: 50;
-  }
-  .top-nav .tabs {
-    display: flex; font-size: 13px; font-weight: 500; overflow-x: auto;
-  }
-  .top-nav .tabs span { white-space: nowrap; opacity: 0.9; }
-
-  /* ======= 次级导航 ======= */
-  .sub-nav {
-    background: #eaeaea; border-bottom: 1px solid #dddddd;
-    display: flex; overflow-x: auto; padding: 8px 10px; gap: 0; font-size: 12px; color: #666;
-  }
-  .sub-nav span { padding: 0 12px; white-space: nowrap; cursor: pointer; }
-  .sub-nav span + span { border-left: 1px solid #ccc; }
-  .sub-nav span.active { color: #333; font-weight: 700; }
-
-  /* ======= 头部信息 ======= */
-  .header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 8px 10px 0; flex-wrap: wrap; gap: 6px;
-  }
-  .header h1 { font-size: 16px; display: flex; align-items: center; gap: 6px; }
-  .header h1 span { color: #2563eb; }
-  .stats { display: flex; gap: 4px; }
-  .stats div { background: white; padding: 3px 8px; border-radius: 6px; border: 1px solid #eee; text-align: center; min-width: 44px; }
-  .stats .num { font-size: 13px; font-weight: bold; display: block; }
-  .stats .label { font-size: 9px; color: #999; }
-  .profit { color: #16a34a; } .loss { color: #dc2626; }
-
-  /* ======= 下单卡片 ======= */
-  .form-card {
-    background: white; border-radius: 6px; margin: 8px 10px; overflow: hidden;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-  }
-  .form-card .card-title {
-    background: #f9f9f9; padding: 8px 12px; font-weight: 700; font-size: 13px;
-    border-bottom: 1px solid #eee;
-  }
-  .form-card .card-body { padding: 10px 12px; }
-
-  .name-panel { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
-  .name-panel .current-label { font-size: 12px; color: #666; }
-  .name-panel input { flex: 1; border: 1px solid #ddd; border-radius: 4px; padding: 6px 8px; font-size: 13px; outline: none; }
-
-  .match-input-row { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
-  .match-input-row input { flex: 1; border: 1px solid #ddd; border-radius: 4px; padding: 6px 8px; font-size: 13px; outline: none; }
-  .match-input-row .vs { color: #999; font-size: 12px; }
-  .match-input-row .preset-btn { font-size: 11px; color: #2563eb; cursor: pointer; white-space: nowrap; }
-
-  /* ======= 预置比赛列表 ======= */
-  #presetMatches { padding: 0 12px 8px; }
-  .preset-match {
-    display: flex; gap: 8px; align-items: center; padding: 6px 8px;
-    border-bottom: 1px solid #eee; cursor: pointer; font-size: 12px;
-  }
-  .preset-match:hover { background: #f9f9f9; }
-  .preset-match:last-child { border-bottom: none; }
-
-  /* ======= 玩法分类按钮 ======= */
-  .play-category {
-    display: flex; gap: 0; padding: 8px 12px; background: #eaeaea;
-    border-bottom: 1px solid #ddd; overflow-x: auto;
-  }
-  .play-cat-btn {
-    padding: 4px 14px; font-size: 12px; cursor: pointer; color: #666; white-space: nowrap;
-  }
-  .play-cat-btn + .play-cat-btn { border-left: 1px solid #ccc; }
-  .play-cat-btn.active { color: #333; font-weight: 700; }
-
-  /* ======= 玩法选项网格 ======= */
-  .play-options {
-    display: grid; gap: 0; margin: 0 12px 8px;
-    border: 1px solid #eee; border-radius: 4px; overflow: hidden;
-  }
-  .play-cat-2col { grid-template-columns: 1fr 1fr; }
-  .play-cat-3col { grid-template-columns: 1fr 1fr 1fr; }
-  .play-cat-5col { grid-template-columns: 1fr 1fr 1fr 1fr 1fr; }
-  .play-opt-btn {
-    background: white; border: none; border-right: 1px solid #eee; border-bottom: 1px solid #eee;
-    padding: 10px 4px; cursor: pointer; text-align: center;
-    display: flex; flex-direction: column; gap: 2px; user-select: none;
-    transition: background 0.1s; outline: none;
-  }
-  .play-cat-2col .play-opt-btn:nth-child(2n) { border-right: none; }
-  .play-cat-3col .play-opt-btn:nth-child(3n) { border-right: none; }
-  .play-cat-5col .play-opt-btn:nth-child(5n) { border-right: none; }
-  .play-opt-btn .opt-name { font-size: 12px; color: #666; }
-  .play-opt-btn .opt-odds { font-size: 15px; font-weight: 700; color: #e1251b; }
-  .play-opt-btn:active { background: #eff6ff; }
-  .play-opt-btn.selected { background: #eff6ff; }
-  .play-opt-btn.selected .opt-odds { color: #2563eb; }
-  .play-section-title {
-    font-size: 11px; color: #999; padding: 6px 8px 4px;
-    border-bottom: 1px solid #eee; grid-column: 1 / -1; background: #fafafa; font-weight: 500;
-  }
-
-  /* ======= 快速投注栏 ======= */
-  .quick-bet {
-    padding: 12px 12px; background: #f9f9f9; border-top: 1px solid #eee;
-    display: flex; gap: 8px; align-items: center;
-  }
-  .quick-bet label { font-size: 11px; color: #999; white-space: nowrap; }
-  .quick-bet input {
-    border: 1px solid #ddd; border-radius: 4px; padding: 8px 6px; font-size: 15px; width: 70px; outline: none; font-weight: 600;
-  }
-  .quick-bet input:focus { border-color: #2563eb; }
-  .quick-bet .odds-input { color: #2563eb; }
-  .quick-bet .amount-input { color: #dc2626; border-color: #fca5a5; background: #fef2f2; }
-  .quick-bet .btn-submit {
-    background: #2563eb; color: white; border: none; border-radius: 4px;
-    padding: 9px 18px; font-size: 14px; font-weight: 600; cursor: pointer;
-  }
-
-  /* ======= 筛选栏 ======= */
-  .filter-bar {
-    display: flex; gap: 6px; align-items: center; padding: 8px 10px 4px; flex-wrap: wrap;
-  }
-  .filter-bar select, .filter-bar input {
-    background: white; border: 1px solid #ddd; border-radius: 4px;
-    padding: 5px 8px; font-size: 12px; outline: none; color: #333;
-  }
-  .filter-bar .btn-sm {
-    background: transparent; border: 1px solid #ddd; border-radius: 4px;
-    padding: 5px 10px; font-size: 11px; cursor: pointer; color: #666;
-  }
-  .filter-bar .btn-sm:hover { background: #f0f0f0; }
-  .filter-bar .filter-count { font-size: 11px; color: #999; margin-left: auto; }
-  .filter-bar .btn-danger-sm { background: #dc2626; color: white; border: none; border-radius: 4px; padding: 5px 10px; font-size: 11px; cursor: pointer; }
-
-  /* ======= 表格 ======= */
-  .table-wrap {
-    background: white; border-radius: 6px; border: 1px solid #eee;
-    margin: 0 10px 8px; overflow-x: auto;
-  }
-  table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  th {
-    background: #f9f9f9; padding: 7px 8px; text-align: left; color: #999;
-    font-weight: 500; white-space: nowrap; font-size: 11px;
-  }
-  td { padding: 7px 8px; border-top: 1px solid #eee; white-space: nowrap; }
-  .tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 500; }
-  .tag-win { background: rgba(22,163,74,0.15); color: #16a34a; }
-  .tag-lose { background: rgba(220,38,38,0.15); color: #dc2626; }
-  .tag-pending { background: rgba(217,119,6,0.15); color: #d97706; }
-  .tag-cancel { background: rgba(153,153,153,0.15); color: #999; }
-  .empty-row td { text-align: center; color: #999; padding: 24px; }
-  .del-btn { cursor: pointer; opacity: 0.3; font-size: 14px; }
-  .del-btn:hover { opacity: 1; color: #dc2626; }
-
-  .display-mode td { font-size: 14px; padding: 10px 8px; }
-  .display-mode th { font-size: 12px; }
-
-  /* ======= 底部按钮 ======= */
-  .bottom-bar {
-    position: fixed; bottom: 0; left: 0; right: 0; background: white;
-    border-top: 1px solid #ddd; display: flex; justify-content: center;
-    gap: 10px; padding: 8px 10px; z-index: 50;
-  }
-  .bottom-bar .mode-btn {
-    border-radius: 20px; padding: 6px 18px; font-size: 12px; cursor: pointer; font-weight: 500;
-  }
-
-  /* ======= Toast ======= */
-  .toast {
-    position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);
-    background: #333; color: white; border-radius: 6px;
-    padding: 8px 16px; font-size: 12px; z-index: 100;
-    display: none; animation: fadeIn 0.3s;
-  }
-  @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; } }
-
-  /* ======= 弹窗 ======= */
-  .modal-overlay {
-    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-    justify-content: center; align-items: center; z-index: 100;
-  }
-  .modal-overlay.show { display: flex; }
-  .modal {
-    background: white; border-radius: 10px; padding: 16px; max-width: 360px; width: 90%;
-  }
-  .modal h3 { font-size: 15px; margin-bottom: 8px; }
-  .modal p { color: #666; font-size: 12px; margin-bottom: 12px; }
-  .modal .btn-group { display: flex; gap: 8px; justify-content: flex-end; }
-  .modal .btn { border-radius: 6px; padding: 6px 14px; font-size: 12px; cursor: pointer; border: none; }
-  .modal .btn-primary { background: #2563eb; color: white; }
-  .modal .btn-default { background: #f0f0f0; color: #333; }
-  .modal .btn-danger { background: #dc2626; color: white; }
-
-  /* ======= 预设比赛卡片 ======= */
-  .preset-list { padding: 0 10px 8px; }
-  .preset-title { font-size: 11px; color: #999; margin-bottom: 4px; padding: 0 2px; }
-  .quick-bet input:focus { border-color: #2563eb; }
-
-  .name-panel {
-    display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; align-items: center;
-  }
-  .name-panel .current-label { font-size: 11px; color: var(--muted); }
-
-  @media (max-width: 500px) {
-    .form-row-3 { grid-template-columns: 1fr 1fr; }
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>世界杯2026(美加墨)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .pitch-line {
+            position: absolute;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        .odds-btn {
+            transition: background 0.1s;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .odds-btn:active {
+            background: #dbeafe !important;
+        }
+        .odds-btn.selected {
+            background: #eff6ff !important;
+            border-color: #3b82f6 !important;
+        }
+        .scrollbar-none::-webkit-scrollbar { display: none; }
+        .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
 </head>
-<body>
-<div class="container">
+<body class="bg-[#f4f4f4] text-[#333] text-[13px] pb-6">
 
-<!-- 顶部导航 -->
-<div class="top-nav">
-  <div class="tabs">
-    <span class="active" id="currentTime"></span>
-  </div>
-</div>
-
-<!-- 次级导航（显示模式用）已移除 -->
-
-<div class="header">
-    <h1>⚽ <span>朱老板带大家吃肉！</span></h1>
-    <div class="stats" id="statsBar">
-    <div><span class="num" id="sTotal">-</span><span class="label">单数</span></div>
-    <div><span class="num" id="sWinRate">-</span><span class="label">胜率</span></div>
-    <div><span class="num" id="sProfit">-</span><span class="label">盈亏</span></div>
-  </div>
-</div>
-
-<div class="form-card" id="orderForm" style="display:none">
-  <div class="card-title">📝 新订单</div>
-  <div class="card-body">
-  <!-- 名字填写 -->
-  <!-- 名字填写 -->
-  <div class="name-panel">
-    <span class="current-label">谁下的：</span>
-    <input type="text" id="authorName" placeholder="必填：填下单人名字" maxlength="10" required
-      style="width:120px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:12px;outline:none">
-  </div>
-
-  <!-- 自定义比赛 -->
-  <div style="display:flex;gap:6px;margin-bottom:6px">
-    <span class="preset-match" id="btnMex" style="flex:1;text-align:center;font-size:12px;background:#f0f0f0;border-radius:4px;padding:6px;cursor:pointer;border:1px solid transparent" onclick="pickMatch('墨西哥','南非')">🇲🇽 墨西哥 vs 南非 🇿🇦</span>
-    <span class="preset-match" id="btnKor" style="flex:1;text-align:center;font-size:12px;background:#f0f0f0;border-radius:4px;padding:6px;cursor:pointer;border:1px solid transparent" onclick="pickMatch('韩国','捷克')">🇰🇷 韩国 vs 捷克 🇨🇿</span>
-  </div>
-
-  <!-- 预置比赛（默认隐藏） -->
-  <div id="presetMatches" style="display:none;margin-bottom:8px">
-    <div style="font-size:11px;color:#999;margin-bottom:4px;padding:0 2px">2026世界杯 小组赛第1轮</div>
-    <div class="preset-match" data-home="墨西哥" data-away="南非" onclick="pickMatch(this)">
-      <span style="color:var(--gold);font-size:10px">6/12 03:00</span>
-      <span>墨西哥 vs 南非</span>
-      <span style="font-size:10px;color:var(--muted)">揭幕战</span>
+    <!-- 顶部导航 -->
+    <div class="bg-[#0a2016] text-white px-4 py-3 flex items-center justify-between sticky top-0 z-50">
+        <span class="text-lg">‹</span>
+        <span class="font-semibold text-sm">世界杯2026(美加墨)</span>
+        <span class="text-lg">☆</span>
     </div>
-    <div class="preset-match" data-home="韩国" data-away="捷克" onclick="pickMatch(this)">
-      <span style="color:var(--gold);font-size:10px">6/12 10:00</span>
-      <span>韩国 vs 捷克</span>
+
+    <!-- 次级导航 -->
+    <div class="bg-[#eaeaea] border-b border-[#ddd] flex overflow-x-auto px-3 py-2 text-xs text-[#666] scrollbar-none">
+        <span class="px-3 text-[#333] font-bold border-b-2 border-[#333] pb-1">滚球</span>
+        <span class="px-3 border-l border-[#ccc]">让球&amp;大小</span>
+        <span class="px-3 border-l border-[#ccc]">波胆</span>
+        <span class="px-3 border-l border-[#ccc]">角球</span>
+        <span class="px-3 border-l border-[#ccc]">15分钟</span>
     </div>
-    <div class="preset-match" data-home="加拿大" data-away="波黑" onclick="pickMatch(this)">
-      <span style="color:var(--gold);font-size:10px">6/13 03:00</span>
-      <span>加拿大 vs 波黑</span>
+
+    <!-- 足球场 -->
+    <div class="relative mx-3 mt-3 rounded-lg overflow-hidden" style="height:180px; background: linear-gradient(to bottom, #15803d, #166534);">
+        <!-- 场线 -->
+        <div class="pitch-line left-1/2 top-0 bottom-0 -translate-x-1/2"></div>
+        <div class="pitch-line left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full"></div>
+        <div class="pitch-line left-[8%] top-1/4 bottom-1/4 w-16 rounded-sm"></div>
+        <div class="pitch-line right-[8%] top-1/4 bottom-1/4 w-16 rounded-sm"></div>
+        <div class="pitch-line left-[12%] top-1/3 bottom-1/3 w-4 rounded-sm"></div>
+        <div class="pitch-line right-[12%] top-1/3 bottom-1/3 w-4 rounded-sm"></div>
+
+        <!-- 比分 -->
+        <div class="absolute inset-0 flex flex-col items-center justify-center text-white">
+            <div class="flex items-center gap-8 mb-1">
+                <div class="text-center">
+                    <div class="text-xs opacity-80">墨西哥</div>
+                    <div class="text-4xl font-bold">0</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-xs opacity-80">南非</div>
+                    <div class="text-4xl font-bold">0</div>
+                </div>
+            </div>
+            <div class="text-[10px] opacity-60 mb-2">15:03 · 第1轮</div>
+            <div class="bg-black/50 rounded-lg px-4 py-1.5 flex gap-4 text-[10px] text-white/80">
+                <span>进攻<br><strong class="text-white text-xs">0</strong></span>
+                <span>危险进攻<br><strong class="text-white text-xs">0</strong></span>
+                <span>控球率<br><strong class="text-white text-xs">50%</strong></span>
+                <span>角球<br><strong class="text-white text-xs">0</strong></span>
+            </div>
+        </div>
+
+        <!-- 队名左上右上 -->
+        <div class="absolute top-2 left-3 text-white/80 text-[10px]">🇲🇽 墨西哥</div>
+        <div class="absolute top-2 right-3 text-white/80 text-[10px]">南非 🇿🇦</div>
     </div>
-    <div class="preset-match" data-home="美国" data-away="巴拉圭" onclick="pickMatch(this)">
-      <span style="color:var(--gold);font-size:10px">6/13 09:00</span>
-      <span>美国 vs 巴拉圭</span>
+
+    <!-- 图标菜单 -->
+    <div class="flex justify-around items-center py-2 mx-3 text-xs text-[#999] border-b border-[#eee]">
+        <span class="text-[#2563eb] font-bold">🏟️ 赛事</span>
+        <span>📊 数据</span>
+        <span>🎙️ 解说</span>
+        <span>👕 阵容</span>
+        <span>⚔️ VS</span>
+        <span>📋 表格</span>
     </div>
-    <div class="preset-match" data-home="卡塔尔" data-away="瑞士" onclick="pickMatch(this)">
-      <span style="color:var(--gold);font-size:10px">6/14 03:00</span>
-      <span>卡塔尔 vs 瑞士</span>
+
+    <!-- 赔率模块 -->
+    <div class="px-3 space-y-2 mt-2">
+
+        <!-- 让球 -->
+        <div class="bg-white rounded shadow-sm overflow-hidden">
+            <div class="bg-[#f9f9f9] px-3 py-2 font-bold text-sm border-b border-[#eee]">让球</div>
+            <div class="grid grid-cols-2 gap-px bg-[#eee]">
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">主 -0/0.5</span>
+                    <span class="text-[#e1251b] font-bold text-sm">1.06</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">客 +0/0.5</span>
+                    <span class="text-[#e1251b] font-bold text-sm">0.83</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">主 -0.5</span>
+                    <span class="text-[#e1251b] font-bold text-sm">0.75</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">客 +0.5</span>
+                    <span class="text-[#e1251b] font-bold text-sm">1.18</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">主 -0.5/1</span>
+                    <span class="text-[#e1251b] font-bold text-sm">1.35</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">客 +0.5/1</span>
+                    <span class="text-[#e1251b] font-bold text-sm">0.62</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">主 -1</span>
+                    <span class="text-[#e1251b] font-bold text-sm">0.51</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">客 +1</span>
+                    <span class="text-[#e1251b] font-bold text-sm">1.65</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 大小 -->
+        <div class="bg-white rounded shadow-sm overflow-hidden">
+            <div class="bg-[#f9f9f9] px-3 py-2 font-bold text-sm border-b border-[#eee]">大小</div>
+            <div class="grid grid-cols-2 gap-px bg-[#eee]">
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">大 2/2.5</span>
+                    <span class="text-[#e1251b] font-bold text-sm">0.95</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">小 2/2.5</span>
+                    <span class="text-[#e1251b] font-bold text-sm">0.93</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">大 2.5</span>
+                    <span class="text-[#e1251b] font-bold text-sm">1.23</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">小 2.5</span>
+                    <span class="text-[#e1251b] font-bold text-sm">0.69</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">大 2</span>
+                    <span class="text-[#e1251b] font-bold text-sm">0.67</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">小 2</span>
+                    <span class="text-[#e1251b] font-bold text-sm">1.26</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">大 2.5/3</span>
+                    <span class="text-[#e1251b] font-bold text-sm">1.53</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">小 2.5/3</span>
+                    <span class="text-[#e1251b] font-bold text-sm">0.53</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 独赢 -->
+        <div class="bg-white rounded shadow-sm overflow-hidden">
+            <div class="bg-[#f9f9f9] px-3 py-2 font-bold text-sm border-b border-[#eee]">独赢</div>
+            <div class="grid grid-cols-3 gap-px bg-[#eee]">
+                <button class="odds-btn bg-white p-3 flex flex-col items-center">
+                    <span class="text-[#666] text-xs">主胜</span>
+                    <span class="text-[#e1251b] font-bold text-sm mt-0.5">1.41</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex flex-col items-center">
+                    <span class="text-[#666] text-xs">平局</span>
+                    <span class="text-[#e1251b] font-bold text-sm mt-0.5">4.40</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex flex-col items-center">
+                    <span class="text-[#666] text-xs">客胜</span>
+                    <span class="text-[#e1251b] font-bold text-sm mt-0.5">6.70</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 波胆 -->
+        <div class="bg-white rounded shadow-sm overflow-hidden">
+            <div class="bg-[#f9f9f9] px-3 py-2 font-bold text-sm border-b border-[#eee]">波胆</div>
+            <div class="grid grid-cols-3 text-center bg-[#f5f5f5] py-1.5 text-[10px] text-[#999] border-b border-[#eee]">
+                <div>主胜</div>
+                <div>平局</div>
+                <div>客胜</div>
+            </div>
+            <div class="grid grid-cols-3 gap-px bg-[#eee]">
+                <button class="odds-btn bg-white py-2.5 flex flex-col items-center"><span class="text-[#666] text-xs">1-0</span><span class="text-[#e1251b] font-bold text-sm">5.2</span></button>
+                <button class="odds-btn bg-white py-2.5 flex flex-col items-center"><span class="text-[#666] text-xs">0-0</span><span class="text-[#e1251b] font-bold text-sm">8.0</span></button>
+                <button class="odds-btn bg-white py-2.5 flex flex-col items-center"><span class="text-[#666] text-xs">0-1</span><span class="text-[#e1251b] font-bold text-sm">9.0</span></button>
+                <button class="odds-btn bg-white py-2.5 flex flex-col items-center"><span class="text-[#666] text-xs">2-0</span><span class="text-[#e1251b] font-bold text-sm">9.0</span></button>
+                <button class="odds-btn bg-white py-2.5 flex flex-col items-center"><span class="text-[#666] text-xs">1-1</span><span class="text-[#e1251b] font-bold text-sm">6.0</span></button>
+                <button class="odds-btn bg-white py-2.5 flex flex-col items-center"><span class="text-[#666] text-xs">0-2</span><span class="text-[#e1251b] font-bold text-sm">15.0</span></button>
+                <button class="odds-btn bg-white py-2.5 flex flex-col items-center"><span class="text-[#666] text-xs">3-0</span><span class="text-[#e1251b] font-bold text-sm">18.0</span></button>
+                <button class="odds-btn bg-white py-2.5 flex flex-col items-center"><span class="text-[#666] text-xs">2-2</span><span class="text-[#e1251b] font-bold text-sm">12.0</span></button>
+                <button class="odds-btn bg-white py-2.5 flex flex-col items-center"><span class="text-[#666] text-xs">1-2</span><span class="text-[#e1251b] font-bold text-sm">11.0</span></button>
+                <button class="odds-btn bg-white py-2.5 flex flex-col items-center"><span class="text-[#666] text-xs">3-1</span><span class="text-[#e1251b] font-bold text-sm">21.0</span></button>
+                <button class="odds-btn bg-white py-2.5 flex flex-col items-center"><span class="text-[#666] text-xs">3-3</span><span class="text-[#e1251b] font-bold text-sm">55.0</span></button>
+                <button class="odds-btn bg-white py-2.5 flex flex-col items-center"><span class="text-[#666] text-xs">0-3</span><span class="text-[#e1251b] font-bold text-sm">35.0</span></button>
+            </div>
+            <div class="text-center py-2 text-[#2563eb] font-medium text-xs border-t border-[#eee] cursor-pointer active:bg-gray-50">显示更多</div>
+        </div>
+
+        <!-- 双方球队进球 -->
+        <div class="bg-white rounded shadow-sm overflow-hidden">
+            <div class="bg-[#f9f9f9] px-3 py-2 font-bold text-sm border-b border-[#eee]">双方球队进球</div>
+            <div class="grid grid-cols-2 gap-px bg-[#eee]">
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">是</span>
+                    <span class="text-[#e1251b] font-bold text-sm">2.58</span>
+                </button>
+                <button class="odds-btn bg-white p-3 flex justify-between items-center text-left">
+                    <span class="text-[#666] text-xs">否</span>
+                    <span class="text-[#e1251b] font-bold text-sm">1.52</span>
+                </button>
+            </div>
+        </div>
+
     </div>
-    <div class="preset-match" data-home="巴西" data-away="摩纳哥" onclick="pickMatch(this)">
-      <span style="color:var(--gold);font-size:10px">6/14 06:00</span>
-      <span>巴西 vs 摩纳哥</span>
-      <span style="font-size:10px;color:var(--red)">🔥焦点战</span>
-    </div>
-    <div class="preset-match" data-home="海地" data-away="苏格兰" onclick="pickMatch(this)">
-      <span style="color:var(--gold);font-size:10px">6/14 09:00</span>
-      <span>海地 vs 苏格兰</span>
-    </div>
-    <div class="preset-match" data-home="德国" data-away="库拉索" onclick="pickMatch(this)">
-      <span style="color:var(--gold);font-size:10px">6/15 17:00</span>
-      <span>德国 vs 库拉索</span>
-    </div>
-    <div class="preset-match" data-home="荷兰" data-away="日本" onclick="pickMatch(this)">
-      <span style="color:var(--gold);font-size:10px">6/15 20:00</span>
-      <span>荷兰 vs 日本</span>
-      <span style="font-size:10px;color:var(--red)">🔥强强对话</span>
-    </div>
-    <div class="preset-match" data-home="科特迪瓦" data-away="厄瓜多尔" onclick="pickMatch(this)">
-      <span style="color:var(--gold);font-size:10px">6/15 23:00</span>
-      <span>科特迪瓦 vs 厄瓜多尔</span>
-    </div>
-    <div class="preset-match" data-home="瑞典" data-away="突尼斯" onclick="pickMatch(this)">
-      <span style="color:var(--gold);font-size:10px">6/16 02:00</span>
-      <span>瑞典 vs 突尼斯</span>
-    </div>
-    <div class="preset-match" data-home="西班牙" data-away="佛得角" onclick="pickMatch(this)">
-      <span style="color:var(--gold);font-size:10px">6/16 16:00</span>
-      <span>西班牙 vs 佛得角</span>
-    </div>
-    <div class="preset-match" data-home="比利时" data-away="埃及" onclick="pickMatch(this)">
-      <span style="color:var(--gold);font-size:10px">6/16 19:00</span>
-      <span>比利时 vs 埃及</span>
-    </div>
-    <div class="preset-match" data-home="沙特" data-away="乌拉圭" onclick="pickMatch(this)">
-      <span style="color:var(--gold);font-size:10px">6/16 22:00</span>
-      <span>沙特 vs 乌拉圭</span>
-    </div>
-  </div>
 
-  <!-- 玩法选项 -->
-  <div class="play-options" id="playOptions"></div>
+    <script>
+        // 点击选中高亮效果（取消其他同模块的选中）
+        document.querySelectorAll('.odds-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const parent = this.closest('.grid');
+                if (parent) {
+                    parent.querySelectorAll('.odds-btn').forEach(b => b.classList.remove('selected'));
+                }
+                this.classList.add('selected');
+            });
+        });
+    </script>
 
-  <!-- 赔率和金额快速填 -->
-  <div class="quick-bet">
-    <label>赔率</label>
-    <input type="number" id="odds" step="0.01" min="1" placeholder="2.00" value="1.00" class="odds-input">
-    <label>¥</label>
-    <input type="number" id="betAmount" step="10" min="1" placeholder="100" value="" class="amount-input">
-    <span style="flex:1"></span>
-    <button class="btn-submit" onclick="addOrder()">➕ 下单</button>
-  </div>
-  <div style="font-size:10px;color:#999;padding:4px 12px 8px" id="calcHint">输入金额自动算奖金</div>
-</div>
-
-<!-- 关闭 card-body -->
-</div>
-
-<div class="filter-bar">
-  <select id="filterAuthor" onchange="loadData()" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:12px;outline:none">
-    <option value="">全部</option>
-  </select>
-  <select id="filterResult" onchange="loadData()" style="background:var(--card);border:1px solid var(--border);border-radius:6px;padding:5px 8px;color:var(--text);font-size:12px;outline:none">
-    <option value="全部">全部</option>
-    <option value="待结算">⏳ 待结算</option>
-    <option value="中">✅ 已中</option>
-    <option value="未中">❌ 未中</option>
-  </select>
-  <button class="btn-sm" onclick="document.getElementById('filterAuthor').value='';document.getElementById('filterResult').value='全部';loadData()">清除</button>
-  <span style="margin-left:auto;font-size:11px;color:var(--muted)" id="filterCount"></span>
-  <button class="btn-danger-sm" id="clearAllBtn" onclick="showClearModal()">🗑 清空</button>
-</div>
-
-<div class="table-wrap">
-  <table>
-    <thead><tr>
-      <th>谁</th><th>比赛</th><th>赔率</th><th>金额</th><th></th>
-    </tr></thead>
-    <tbody id="orderBody"></tbody>
-  </table>
-</div>
-
-</div>
-
-<div class="bottom-bar">
-    <span class="mode-btn" style="background:#f0f0f0;color:#333" onclick="toggleMode()">✏️ 下单</span>
-    <span class="mode-btn" style="background:#f0f0f0;color:#333" onclick="showInsider()">🔒 内幕</span>
-</div>
-
-<input type="hidden" id="orderDate">
-
-<div class="modal-overlay" id="clearModal">
-  <div class="modal">
-    <h3>⚠️ 确认清空</h3>
-    <p>删除所有人填的所有订单，不可恢复！</p>
-    <div class="btn-group">
-      <button class="btn btn-outline" onclick="closeClear()">取消</button>
-      <button class="btn btn-danger" onclick="clearAll()">确认清空</button>
-    </div>
-  </div>
-</div>
-
-<!-- 内幕信息弹窗 -->
-<div class="modal-overlay" id="insiderModal">
-  <div class="modal" style="max-width:500px">
-    <h3>🔒 内幕信息</h3>
-    <div id="insiderMessages" style="max-height:400px;overflow-y:auto;font-size:13px;line-height:1.6">
-      <div style="color:var(--muted);text-align:center;padding:20px">暂无内幕信息</div>
-    </div>
-    <div style="margin-top:10px;text-align:right">
-      <button class="btn btn-outline btn-sm" onclick="closeInsider()">关闭</button>
-    </div>
-  </div>
-</div>
-
-<script>
-const API = '/api';
-
-// ======================= 数据定义 =======================
-// 所有选项合并展示（去掉分类切换）
-const ALL_OPTIONS = [
-  { title: '让球', items: ['{H}(-1) 胜', '让球平', '{A}(+1) 胜', '{H}(-0.5)', '{A}(+0.5)'] },
-  { title: '大 / 小', items: ['大2.5', '小2.5', '大1.5', '小1.5', '大3.5', '小3.5'] },
-  { title: '独赢', items: ['{H} 胜', '平局', '{A} 胜'] },
-  { title: '波胆', items: [
-    '1-0', '2-0', '3-0', '4-0', '胜其他',
-    '0-1', '0-2', '0-3', '0-4', '负其他',
-    '0-0', '1-1', '2-2', '3-3', '平其他'
-  ] },
-  { title: '双方球队进球', items: ['双方都进球-是', '双方都进球-否'] },
-  { title: '开球球队', items: ['{H} 开球', '{A} 开球'] }
-];
-
-const CATEGORY_NAMES = {
-  common: '常用/独赢', rangqiu: '让球盘', daxiao: '大小球', score: '比分/进球数', half: '半全场/其他'
-};
-
-// ======================= 状态 =======================
-let selectedOption = '';
-let currentMatch = '';
-
-// ======================= 初始化 =======================
-document.getElementById('orderDate').value = new Date().toISOString().slice(0,10);
-document.getElementById('betAmount').addEventListener('input', calcHint);
-document.getElementById('odds').addEventListener('input', calcHint);
-renderOptions();
-
-// ======================= 初始化默认分类 =======================
-let currentCategory = 'common';
-
-// ======================= 名字获取 =======================
-function getAuthor() {
-  const val = document.getElementById('authorName').value.trim();
-  return val || '';
-}
-
-// ======================= 比赛选择 =======================
-function selectMatch(el) {
-  document.querySelectorAll('.match-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  currentMatch = el.dataset.match;
-}
-
-// ======================= 玩法切换 =======================
-function switchCategory(cat) {
-  currentCategory = cat;
-  document.querySelectorAll('.sub-nav span').forEach(b => {
-    b.classList.toggle('active', b.dataset.cat === cat);
-  });
-  selectedOption = '';
-  renderOptions();
-}
-
-function updateMatch() {
-  const { home, away } = getTeams();
-  currentMatch = home + ' vs ' + away;
-  renderOptions();
-  document.querySelectorAll('.preset-match').forEach(c => c.classList.remove('selected'));
-}
-
-function togglePresetMatches() {
-  const el = document.getElementById('presetMatches');
-  el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}
-
-function pickMatch(home, away) {
-  // 高亮选中的比赛按钮（输入框已移除，不再赋值）
-  document.querySelectorAll('.preset-match').forEach(b => {
-    b.style.background = '#f0f0f0';
-    b.style.borderColor = 'transparent';
-  });
-  const id = home === '墨西哥' ? 'btnMex' : 'btnKor';
-  const btn = document.getElementById(id);
-  if (btn) {
-    btn.style.background = '#f0fdf4';
-    btn.style.borderColor = '#16a34a';
-  }
-  updateMatch();
-}
-
-function getTeams() {
-  // 从选中的比赛按钮的onclick参数获取
-  const sel = document.querySelector('.preset-match[style*="f0fdf4"]');
-  if (sel) {
-    const onclick = sel.getAttribute('onclick');
-    const match = onclick.match(/pickMatch\('(.+?)','(.+?)'\)/);
-    if (match) return { home: match[1], away: match[2] };
-  }
-  // 默认返回第一场比赛
-  return { home: '墨西哥', away: '南非' };
-}
-
-function fillTemplate(tpl, home, away) {
-  return tpl.replace(/\{H\}/g, home).replace(/\{A\}/g, away);
-}
-
-function renderOptions() {
-  const container = document.getElementById('playOptions');
-  const { home, away } = getTeams();
-  const oddsList = {
-    '{H}(-1) 胜': '2.10', '让球平': '3.40', '{A}(+1) 胜': '3.00',
-    '{H}(-0.5)': '2.05', '{A}(+0.5)': '1.85',
-    '大2.5': '2.05', '小2.5': '1.85', '大1.5': '1.75', '小1.5': '2.15',
-    '大3.5': '2.50', '小3.5': '1.55',
-    '{H} 胜': '1.50', '平局': '3.80', '{A} 胜': '6.50',
-    '1-0': '7.5', '2-0': '11.0', '3-0': '23.0', '4-0': '41.0', '胜其他': '101',
-    '0-1': '11.0', '0-2': '18.0', '0-3': '45.0', '0-4': '81.0', '负其他': '151',
-    '0-0': '9.5', '1-1': '6.5', '2-2': '14.0', '3-3': '65.0', '平其他': '151',
-    '双方都进球-是': '1.90', '双方都进球-否': '1.90',
-    '{H} 开球': '1.85', '{A} 开球': '1.85'
-  };
-
-  let html = '';
-  ALL_OPTIONS.forEach(section => {
-    html += `<div class="play-section-title">${section.title}</div>`;
-    const items = section.items.map(t => t.replace(/\{H\}/g, home).replace(/\{A\}/g, away));
-    // 根据选项数量决定列数
-    let cols = section.items.length <= 2 ? 'play-cat-2col' : section.title === '波胆' ? 'play-cat-5col' : 'play-cat-3col';
-    html += `<div class="play-options ${cols}" style="margin-bottom:4px">`;
-    items.forEach(o => {
-      const odds = oddsList[o] || oddsList[section.items[items.indexOf(o)]] || '0';
-      html += `<span class="play-opt-btn" data-opt="${o}" onclick="selectOpt(this, '${o}')">
-        <span class="opt-name">${o}</span>
-        <span class="opt-odds">${odds}</span>
-      </span>`;
-    });
-    html += `</div>`;
-  });
-  container.innerHTML = html;
-  selectedOption = '';
-}
-
-function selectOpt(el, opt) {
-  document.querySelectorAll('.play-opt-btn').forEach(b => b.classList.remove('selected'));
-  el.classList.add('selected');
-  selectedOption = opt;
-  // 自动填充赔率到输入框
-  const oddsEl = el.querySelector('.opt-odds');
-  if (oddsEl) {
-    const oddsVal = parseFloat(oddsEl.textContent);
-    if (!isNaN(oddsVal) && oddsVal > 0) {
-      document.getElementById('odds').value = oddsVal.toFixed(2);
-      calcHint();
-    }
-  }
-}
-
-// ======================= 奖金计算 =======================
-function calcHint() {
-  const odds = parseFloat(document.getElementById('odds').value) || 1;
-  const amount = parseFloat(document.getElementById('betAmount').value) || 0;
-  if (amount > 0) {
-    const payout = (odds * amount).toFixed(2);
-    const profit = (payout - amount).toFixed(2);
-    document.getElementById('calcHint').textContent =
-      `奖金 ¥${payout} | 净盈利 ¥${profit}`;
-  } else {
-    document.getElementById('calcHint').textContent = '输入金额自动算奖金';
-  }
-}
-
-// ======================= 下单 =======================
-async function addOrder() {
-  const date = document.getElementById('orderDate').value;
-  const author = getAuthor();
-  const odds = parseFloat(document.getElementById('odds').value);
-  const amount = parseFloat(document.getElementById('betAmount').value);
-
-  if (!selectedOption) return showToast('请先选择一个具体选项（点击上面的选项按钮）');
-  if (!odds || odds < 1) return showToast('赔率至少 1.0');
-  if (!amount || amount < 1) return showToast('请填写金额');
-  if (!author) return showToast('请填写下单人名字');
-
-  const catName = CATEGORY_NAMES[currentCategory] || '其他';
-  const playLabel = catName + ' - ' + selectedOption;
-
-  try {
-    const res = await fetch(API + '/orders', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        date,
-        home: currentMatch.split(' vs ')[0] || currentMatch,
-        away: currentMatch.split(' vs ')[1] || '',
-        play: playLabel,
-        option: selectedOption,
-        odds,
-        amount,
-        author,
-        result: '待结算'
-      })
-    });
-    if (!res.ok) throw new Error('提交失败');
-    document.getElementById('odds').value = '1.00';
-    document.getElementById('betAmount').value = '';
-    selectedOption = '';
-    document.querySelectorAll('.play-opt-btn').forEach(b => b.classList.remove('selected'));
-    document.getElementById('calcHint').textContent = '输入金额自动算奖金';
-    showToast('✅ ' + author + ' 下了 ' + playLabel + ' ¥' + amount);
-    loadOrders(); loadStats(); loadAuthors();
-  } catch(e) { showToast('❌ 添加失败: ' + e.message); }
-}
-
-// ======================= 订单管理 =======================
-async function updateResult(id, result) {
-  try {
-    await fetch(API + '/orders/' + id, {
-      method: 'PUT',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ result })
-    });
-    loadOrders(); loadStats(); loadAuthors();
-  } catch(e) { showToast('更新失败'); }
-}
-
-async function deleteOrder(id) {
-  if (!confirm('删除这条订单？')) return;
-  try {
-    await fetch(API + '/orders/' + id, { method: 'DELETE' });
-    loadOrders(); loadStats(); loadAuthors();
-  } catch(e) { showToast('删除失败'); }
-}
-
-async function loadAuthors() {
-  try {
-    const res = await fetch(API + '/orders');
-    const orders = await res.json();
-    const names = [...new Set(orders.map(o => o.author).filter(Boolean))];
-    const sel = document.getElementById('filterAuthor');
-    const current = sel.value;
-    sel.innerHTML = '<option value="">全部</option>' + names.map(n => '<option value="' + n + '">' + n + '</option>').join('');
-    // 重建后恢复选中的值
-    if (current && names.includes(current)) {
-      sel.value = current;
-    }
-  } catch(e) {}
-}
-
-async function loadOrders() {
-  const sel = document.getElementById('filterAuthor');
-  const author = sel.value;
-  const result = document.getElementById('filterResult').value;
-  let url = API + '/orders';
-  const params = [];
-  if (author) params.push('author=' + encodeURIComponent(author));
-  if (result && result !== '全部') params.push('result=' + encodeURIComponent(result));
-  if (params.length) url += '?' + params.join('&');
-
-  try {
-    const res = await fetch(url);
-    const orders = await res.json();
-    const tbody = document.getElementById('orderBody');
-    if (orders.length === 0) {
-      tbody.innerHTML = '<tr class="empty-row"><td colspan="5">暂无订单 ⚽</td></tr>';
-      document.getElementById('filterCount').textContent = '';
-      return;
-    }
-    let html = '';
-    orders.forEach(o => {
-      const payout = o.odds * o.amount;
-      let profitHtml = '-';
-      if (o.result === '中') {
-        const p = payout - o.amount;
-        profitHtml = '<span class="profit">+¥' + p.toFixed(2) + '</span>';
-      } else if (o.result === '未中') {
-        profitHtml = '<span class="loss">-¥' + o.amount.toFixed(2) + '</span>';
-      } else if (o.result === '取消') {
-        profitHtml = '<span style="color:var(--muted)">¥0</span>';
-      }
-
-      let resultHtml = '';
-      if (isOrderMode && o.result === '待结算') {
-        resultHtml = '<select style="background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:2px 4px;color:var(--text);font-size:11px" onchange="updateResult(' + o.id + ',this.value)">'
-          + '<option value="待结算" selected>⏳ 待结算</option>'
-          + '<option value="中">✅ 中</option>'
-          + '<option value="未中">❌ 未中</option>'
-          + '<option value="取消">取消</option></select>';
-      } else if (o.result === '待结算') {
-        resultHtml = '<span class="tag tag-pending">⏳ 待结算</span>';
-      } else {
-        const cls = { '中':'tag-win','未中':'tag-lose','取消':'tag-cancel' }[o.result] || 'tag-pending';
-        resultHtml = '<span class="tag ' + cls + '">' + (o.result === '中' ? '✅ ' : o.result === '未中' ? '❌ ' : '') + o.result + '</span>';
-      }
-
-      const delBtn = isOrderMode ? '<td style="text-align:right;vertical-align:middle"><span class="del-btn" onclick="deleteOrder(' + o.id + ')">✕</span></td>' : '';
-
-      const authorHtml = o.author ? '<span style="font-weight:500">' + o.author + '</span>' : '';
-      const matchHtml = o.home + (o.away ? ' vs ' + o.away : '') + '<br><span style="font-size:10px;color:var(--muted)">' + o.play + '</span>';
-
-      html += '<tr>'
-        + '<td>' + authorHtml + '</td>'
-        + '<td style="font-size:11px">' + matchHtml + '</td>'
-        + '<td>' + o.odds + '<br><span style="font-size:10px;color:var(--muted)">' + profitHtml + '</span></td>'
-        + '<td>¥' + o.amount.toFixed(2) + '<br><span style="font-size:10px">' + resultHtml + '</span></td>'
-        + delBtn
-        + '</tr>';
-    });
-    tbody.innerHTML = html;
-    document.getElementById('filterCount').textContent = orders.length + ' 条';
-  } catch(e) { console.error(e); }
-}
-
-async function loadStats() {
-  try {
-    const res = await fetch(API + '/stats');
-    const s = await res.json();
-    document.getElementById('sTotal').textContent = s.total;
-    document.getElementById('sWinRate').textContent = s.winRate + '%';
-    const profitEl = document.getElementById('sProfit');
-    if (s.profit >= 0) profitEl.innerHTML = '<span class="profit">+¥' + s.profit + '</span>';
-    else profitEl.innerHTML = '<span class="loss">-¥' + Math.abs(s.profit) + '</span>';
-  } catch(e) {}
-}
-
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.style.display = 'block';
-  setTimeout(() => t.style.display = 'none', 2000);
-}
-
-function showClearModal() { document.getElementById('clearModal').classList.add('show'); }
-function closeClear() { document.getElementById('clearModal').classList.remove('show'); }
-async function clearAll() {
-  try { await fetch(API + '/orders', { method: 'DELETE' }); loadOrders(); loadStats(); } catch(e) {}
-  closeClear();
-}
-
-loadOrders(); loadStats(); loadAuthors();
-
-// 默认选中墨西哥 vs 南非
-pickMatch('墨西哥', '南非');
-
-// 更新时间显示
-function updateClock() {
-  const now = new Date();
-  document.getElementById('currentTime').textContent = now.toLocaleString('zh-CN', { hour: '2-digit', minute: '2-digit', month: '2-digit', day: '2-digit' }).replace(',', '');
-}
-updateClock();
-setInterval(updateClock, 1000);
-
-// 默认进入显示模式
-document.getElementById('orderForm').style.display = 'none';
-document.querySelector('.header h1').innerHTML = '⚽ <span>朱老板带大家吃肉！</span>';
-document.querySelector('.table-wrap').classList.add('display-mode');
-document.getElementById('clearAllBtn').style.display = 'none';
-
-// ======================= 模式切换 =======================
-let isOrderMode = false;
-function toggleMode() {
-  isOrderMode = !isOrderMode;
-  document.getElementById('orderForm').style.display = isOrderMode ? 'block' : 'none';
-  document.querySelector('.header h1').innerHTML = isOrderMode ? '⚽ <span>滚球</span>下单' : '⚽ <span>朱老板带大家吃肉！</span>';
-  document.querySelector('.table-wrap').classList.toggle('display-mode', !isOrderMode);
-  document.getElementById('clearAllBtn').style.display = isOrderMode ? 'inline-block' : 'none';
-  const btns = document.querySelectorAll('.bottom-bar .mode-btn');
-  if (btns.length >= 2) btns[0].textContent = isOrderMode ? '📺 显示' : '✏️ 下单';
-  loadOrders();
-}
-
-// ======================= 内幕信息 =======================
-function showInsider() {
-  document.getElementById('insiderModal').classList.add('show');
-  loadInsiderMessages();
-}
-function closeInsider() { document.getElementById('insiderModal').classList.remove('show'); }
-
-async function loadInsiderMessages() {
-  try {
-    const res = await fetch(API + '/insider');
-    const msgs = await res.json();
-    const container = document.getElementById('insiderMessages');
-    if (!msgs.length) {
-      container.innerHTML = '<div style="color:var(--muted);text-align:center;padding:20px">暂无内幕信息</div>';
-      return;
-    }
-    container.innerHTML = msgs.map(m =>
-      '<div style="padding:8px 10px;border-bottom:1px solid var(--border)">'
-      + '<div style="font-size:10px;color:var(--muted);margin-bottom:2px">' + m.time + '</div>'
-      + '<div style="white-space:pre-wrap">' + m.text + '</div>'
-      + '</div>'
-    ).join('');
-  } catch(e) {}
-}
-
-// 每10秒自动刷新
-setInterval(() => { loadOrders(); loadStats(); loadAuthors(); }, 10000);
-// 内幕信息每30秒刷新
-setInterval(loadInsiderMessages, 30000);
-</script>
 </body>
 </html>

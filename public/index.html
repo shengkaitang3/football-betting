@@ -112,17 +112,19 @@
 
   /* ======= 快速投注栏 ======= */
   .quick-bet {
-    padding: 10px 12px; background: #f9f9f9; border-top: 1px solid #eee;
+    padding: 12px 12px; background: #f9f9f9; border-top: 1px solid #eee;
     display: flex; gap: 8px; align-items: center;
   }
   .quick-bet label { font-size: 11px; color: #999; white-space: nowrap; }
   .quick-bet input {
-    border: 1px solid #ddd; border-radius: 4px; padding: 6px 6px; font-size: 13px; width: 60px; outline: none;
+    border: 1px solid #ddd; border-radius: 4px; padding: 8px 6px; font-size: 15px; width: 70px; outline: none; font-weight: 600;
   }
   .quick-bet input:focus { border-color: #2563eb; }
+  .quick-bet .odds-input { color: #2563eb; }
+  .quick-bet .amount-input { color: #dc2626; border-color: #fca5a5; background: #fef2f2; }
   .quick-bet .btn-submit {
     background: #2563eb; color: white; border: none; border-radius: 4px;
-    padding: 7px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
+    padding: 9px 18px; font-size: 14px; font-weight: 600; cursor: pointer;
   }
 
   /* ======= 筛选栏 ======= */
@@ -351,9 +353,9 @@
   <!-- 赔率和金额快速填 -->
   <div class="quick-bet">
     <label>赔率</label>
-    <input type="number" id="odds" step="0.01" min="1" placeholder="2.00" value="1.00">
+    <input type="number" id="odds" step="0.01" min="1" placeholder="2.00" value="1.00" class="odds-input">
     <label>¥</label>
-    <input type="number" id="betAmount" step="10" min="1" placeholder="100" value="">
+    <input type="number" id="betAmount" step="10" min="1" placeholder="100" value="" class="amount-input">
     <span style="flex:1"></span>
     <button class="btn-submit" onclick="addOrder()">➕ 下单</button>
   </div>

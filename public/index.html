@@ -91,6 +91,7 @@
   }
   .play-cat-2col { grid-template-columns: 1fr 1fr; }
   .play-cat-3col { grid-template-columns: 1fr 1fr 1fr; }
+  .play-cat-5col { grid-template-columns: 1fr 1fr 1fr 1fr 1fr; }
   .play-opt-btn {
     background: white; border: none; border-right: 1px solid #eee; border-bottom: 1px solid #eee;
     padding: 10px 4px; cursor: pointer; text-align: center;
@@ -99,6 +100,7 @@
   }
   .play-cat-2col .play-opt-btn:nth-child(2n) { border-right: none; }
   .play-cat-3col .play-opt-btn:nth-child(3n) { border-right: none; }
+  .play-cat-5col .play-opt-btn:nth-child(5n) { border-right: none; }
   .play-opt-btn .opt-name { font-size: 12px; color: #666; }
   .play-opt-btn .opt-odds { font-size: 15px; font-weight: 700; color: #e1251b; }
   .play-opt-btn:active { background: #eff6ff; }
@@ -402,7 +404,11 @@ const ALL_OPTIONS = [
   { title: '让球', items: ['{H}(-1) 胜', '让球平', '{A}(+1) 胜', '{H}(-0.5)', '{A}(+0.5)'] },
   { title: '大 / 小', items: ['大2.5', '小2.5', '大1.5', '小1.5', '大3.5', '小3.5'] },
   { title: '独赢', items: ['{H} 胜', '平局', '{A} 胜'] },
-  { title: '波胆', items: ['1-0', '2-0', '2-1', '0-0', '1-1', '2-2', '0-1', '0-2', '1-2'] },
+  { title: '波胆', items: [
+    '1-0', '2-0', '3-0', '4-0', '胜其他',
+    '0-1', '0-2', '0-3', '0-4', '负其他',
+    '0-0', '1-1', '2-2', '3-3', '平其他'
+  ] },
   { title: '双方球队进球', items: ['双方都进球-是', '双方都进球-否'] },
   { title: '开球球队', items: ['{H} 开球', '{A} 开球'] }
 ];
@@ -499,9 +505,9 @@ function renderOptions() {
     '大2.5': '2.05', '小2.5': '1.85', '大1.5': '1.75', '小1.5': '2.15',
     '大3.5': '2.50', '小3.5': '1.55',
     '{H} 胜': '1.50', '平局': '3.80', '{A} 胜': '6.50',
-    '1-0': '7.5', '2-0': '11.0', '2-1': '9.0',
-    '0-0': '9.5', '1-1': '6.5', '2-2': '14.0',
-    '0-1': '11.0', '0-2': '18.0', '1-2': '11.0',
+    '1-0': '7.5', '2-0': '11.0', '3-0': '23.0', '4-0': '41.0', '胜其他': '101',
+    '0-1': '11.0', '0-2': '18.0', '0-3': '45.0', '0-4': '81.0', '负其他': '151',
+    '0-0': '9.5', '1-1': '6.5', '2-2': '14.0', '3-3': '65.0', '平其他': '151',
     '双方都进球-是': '1.90', '双方都进球-否': '1.90',
     '{H} 开球': '1.85', '{A} 开球': '1.85'
   };
@@ -511,7 +517,7 @@ function renderOptions() {
     html += `<div class="play-section-title">${section.title}</div>`;
     const items = section.items.map(t => t.replace(/\{H\}/g, home).replace(/\{A\}/g, away));
     // 根据选项数量决定列数
-    let cols = section.items.length <= 2 ? 'play-cat-2col' : section.items.length === 3 ? 'play-cat-3col' : 'play-cat-3col';
+    let cols = section.items.length <= 2 ? 'play-cat-2col' : section.title === '波胆' ? 'play-cat-5col' : 'play-cat-3col';
     html += `<div class="play-options ${cols}" style="margin-bottom:4px">`;
     items.forEach(o => {
       const odds = oddsList[o] || oddsList[section.items[items.indexOf(o)]] || '0';

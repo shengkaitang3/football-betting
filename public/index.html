@@ -18,7 +18,7 @@
             display: flex; overflow-x: auto; padding: 6px 10px;
             font-size: 12px; color: #666; gap: 4px;
         }
-        .match-tabs span {
+        .match-tabs span, .match-tabs .ai-btn {
             padding: 6px 16px; white-space: nowrap; cursor: pointer;
             border-radius: 20px; transition: all 0.2s;
             background: white; border: 1px solid #ddd;
@@ -26,6 +26,20 @@
         .match-tabs span.active {
             background: #0a2016; color: white; border-color: #0a2016; font-weight: 600;
         }
+        .match-tabs .ai-btn {
+            background: #1e40af; color: white; border-color: #1e40af; font-weight: 600;
+        }
+        .ai-panel {
+            display: none; max-width: 480px; margin: 0 auto; padding: 10px;
+            background: white; border-radius: 8px; border: 1px solid #eee;
+            font-size: 12px; line-height: 1.7;
+        }
+        .ai-panel.show { display: block; }
+        .ai-panel .ai-title { font-weight: 700; font-size: 13px; color: #1e40af; margin-bottom: 6px; }
+        .ai-panel .ai-section { margin: 4px 0; }
+        .ai-panel .ai-label { color: #666; }
+        .ai-panel .ai-highlight { color: #e1251b; font-weight: 700; }
+        .ai-panel .ai-green { color: #16a34a; font-weight: 700; }
         .screenshot-wrap { max-width: 480px; margin: 0 auto; min-height: 100vh; }
         .screenshot-wrap img { width: 100%; display: block; height: auto; }
         .bottom-bar {
@@ -47,9 +61,18 @@
         <span data-img="can-bos.jpg" onclick="switchTab(this)">🇨🇦 加拿大 vs 波黑</span>
         <span data-img="qat-sui.jpg" onclick="switchTab(this)">🇶🇦 卡塔尔 vs 瑞士</span>
         <span data-img="champion.jpg" onclick="switchTab(this)">🏆 冠军</span>
+        <span class="ai-btn" onclick="toggleAI()">🤖 AI分析</span>
     </div>
-    <div class="screenshot-wrap">
+    <div class="screenshot-wrap" id="screenshotWrap">
         <img id="oddsImage" src="mex-s.jpg" alt="赔率截图" style="width:100%" onload="document.getElementById('statusText').textContent='就绪'" onerror="document.getElementById('statusText').textContent='加载失败'">
+    </div>
+    <div class="ai-panel" id="aiPanel">
+        <div class="ai-title">🤖 AI分析 · 墨西哥 vs 南非</div>
+        <div class="ai-section"><span class="ai-label">🏆 预测：</span><span class="ai-green">墨西哥胜</span> <span class="ai-highlight">1.41</span></div>
+        <div class="ai-section"><span class="ai-label">📐 让球：</span>墨西哥 <span class="ai-highlight">-0.5/1 (1.05)</span> | 赢1球赢一半</div>
+        <div class="ai-section"><span class="ai-label">⚽ 大小球：</span><span class="ai-green">小球 2.5</span> <span class="ai-highlight">0.72</span></div>
+        <div class="ai-section"><span class="ai-label">📊 比分预测：</span><span class="ai-highlight">2-0</span> 或 <span class="ai-highlight">1-0</span></div>
+        <div class="ai-section"><span class="ai-label">💡 推荐：</span>墨西哥胜 + 小球2.5 串关</div>
     </div>
     <div class="bottom-bar">📸 截图模式 · 第一次加载较慢请耐心等待 🌸</div>
     <script>
@@ -59,6 +82,19 @@
             const img = document.getElementById('oddsImage');
             document.getElementById('statusText').textContent = '加载中...';
             img.src = el.dataset.img;
+            document.getElementById('aiPanel').classList.remove('show');
+            document.getElementById('screenshotWrap').style.display = 'block';
+        }
+        function toggleAI() {
+            const panel = document.getElementById('aiPanel');
+            const wrap = document.getElementById('screenshotWrap');
+            if (panel.classList.contains('show')) {
+                panel.classList.remove('show');
+                wrap.style.display = 'block';
+            } else {
+                panel.classList.add('show');
+                wrap.style.display = 'none';
+            }
         }
     </script>
 </body>

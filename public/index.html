@@ -262,14 +262,9 @@
   </div>
 
   <!-- 自定义比赛 -->
-  <div class="match-input-row">
-    <input type="text" id="homeTeam" placeholder="主队" oninput="updateMatch()">
-    <span class="vs">vs</span>
-    <input type="text" id="awayTeam" placeholder="客队" oninput="updateMatch()">
-  </div>
   <div style="display:flex;gap:6px;margin-bottom:6px">
-    <span class="preset-match" style="flex:1;text-align:center;font-size:12px;background:#f0f0f0;border-radius:4px;padding:5px;cursor:pointer" onclick="pickMatch('墨西哥','南非')">🇲🇽 墨西哥 vs 南非 🇿🇦</span>
-    <span class="preset-match" style="flex:1;text-align:center;font-size:12px;background:#f0f0f0;border-radius:4px;padding:5px;cursor:pointer" onclick="pickMatch('韩国','捷克')">🇰🇷 韩国 vs 捷克 🇨🇿</span>
+    <span class="preset-match" id="btnMex" style="flex:1;text-align:center;font-size:12px;background:#f0f0f0;border-radius:4px;padding:6px;cursor:pointer;border:1px solid transparent" onclick="pickMatch('墨西哥','南非')">🇲🇽 墨西哥 vs 南非 🇿🇦</span>
+    <span class="preset-match" id="btnKor" style="flex:1;text-align:center;font-size:12px;background:#f0f0f0;border-radius:4px;padding:6px;cursor:pointer;border:1px solid transparent" onclick="pickMatch('韩国','捷克')">🇰🇷 韩国 vs 捷克 🇨🇿</span>
   </div>
 
   <!-- 预置比赛（默认隐藏） -->
@@ -501,9 +496,8 @@ function switchCategory(cat) {
 }
 
 function updateMatch() {
-  const h = document.getElementById('homeTeam').value.trim();
-  const a = document.getElementById('awayTeam').value.trim();
-  currentMatch = h + ' vs ' + a;
+  const { home, away } = getTeams();
+  currentMatch = home + ' vs ' + away;
   renderOptions(currentCategory);
   document.querySelectorAll('.preset-match').forEach(c => c.classList.remove('selected'));
 }
@@ -516,13 +510,30 @@ function togglePresetMatches() {
 function pickMatch(home, away) {
   document.getElementById('homeTeam').value = home;
   document.getElementById('awayTeam').value = away;
+  // 高亮选中的比赛按钮
+  document.querySelectorAll('.preset-match').forEach(b => {
+    b.style.background = '#f0f0f0';
+    b.style.borderColor = 'transparent';
+  });
+  const id = home === '墨西哥' ? 'btnMex' : 'btnKor';
+  const btn = document.getElementById(id);
+  if (btn) {
+    btn.style.background = '#f0fdf4';
+    btn.style.borderColor = '#16a34a';
+  }
   updateMatch();
 }
 
 function getTeams() {
-  const home = document.getElementById('homeTeam').value.trim();
-  const away = document.getElementById('awayTeam').value.trim();
-  return { home, away };
+  // 从选中的比赛按钮的onclick参数获取
+  const sel = document.querySelector('.preset-match[style*="f0fdf4"]');
+  if (sel) {
+    const onclick = sel.getAttribute('onclick');
+    const match = onclick.match(/pickMatch\('(.+?)','(.+?)'\)/);
+    if (match) return { home: match[1], away: match[2] };
+  }
+  // 默认返回第一场比赛
+  return { home: '墨西哥', away: '南非' };
 }
 
 function fillTemplate(tpl, home, away) {
@@ -765,6 +776,9 @@ async function clearAll() {
 }
 
 loadOrders(); loadStats(); loadAuthors();
+
+// 默认选中墨西哥 vs 南非
+pickMatch('墨西哥', '南非');
 
 // 默认进入显示模式
 document.getElementById('orderForm').style.display = 'none';

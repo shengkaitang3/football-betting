@@ -535,7 +535,7 @@ function renderOptions(cat) {
       html += `<div class="play-section-title">${o.replace(/---/g,'').trim()}</div>`;
       return;
     }
-    let odds = '0.00';
+    let odds = '0';
     if (o.includes('胜')) odds = '1.50';
     else if (o === '平局') odds = '3.80';
     else if (o.includes('是')) odds = '1.90';
@@ -561,6 +561,15 @@ function selectOpt(el, opt) {
   document.querySelectorAll('.play-opt-btn').forEach(b => b.classList.remove('selected'));
   el.classList.add('selected');
   selectedOption = opt;
+  // 自动填充赔率到输入框
+  const oddsEl = el.querySelector('.opt-odds');
+  if (oddsEl) {
+    const oddsVal = parseFloat(oddsEl.textContent);
+    if (!isNaN(oddsVal) && oddsVal > 0) {
+      document.getElementById('odds').value = oddsVal.toFixed(2);
+      calcHint();
+    }
+  }
 }
 
 // ======================= 奖金计算 =======================

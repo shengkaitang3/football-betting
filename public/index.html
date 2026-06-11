@@ -157,7 +157,7 @@
     </div>
 
     <!-- ====== Bottom Sheet 遮罩 + 弹窗 ====== -->
-    <div id="betSheet" class="fixed inset-0 z-[100] pointer-events-none sheet-open" style="display:none">
+    <div id="betSheet" class="fixed inset-0 z-[100]" style="display:none">
         <!-- 遮罩 -->
         <div class="sheet-overlay absolute inset-0 bg-black/50 opacity-0 pointer-events-none" onclick="closeSheet()"></div>
         <!-- 弹窗面板 -->
@@ -189,7 +189,7 @@
             <!-- 金额输入 -->
             <div class="px-4 py-3 border-b border-[#eee]">
                 <div class="flex items-center gap-2">
-                    <input type="text" inputmode="decimal" id="betAmount" placeholder="输入下注金额" class="flex-1 border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-blue-500" value="" oninput="this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\\..*)\\./g,'$1');calcPayout()">
+                    <input type="tel" inputmode="decimal" id="betAmount" placeholder="输入下注金额" class="flex-1 border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-blue-500" value="" oninput="this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\\..*)\\./g,'$1');calcPayout()">
                     <span class="text-blue-500 text-xs whitespace-nowrap cursor-pointer" onclick="document.getElementById('betAmount').value='10000';calcPayout()">最大投注金额</span>
                 </div>
                 <div class="text-xs text-gray-500 mt-2">

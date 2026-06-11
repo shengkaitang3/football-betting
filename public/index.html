@@ -10,7 +10,7 @@
         .top-nav {
             background: #0a2016; color: white; padding: 10px 12px;
             display: flex; align-items: center; justify-content: space-between;
-            position: sticky; top: 0; z-index: 50;
+            position: sticky; top: 0; z-index: 50; position: relative;
         }
         .top-nav .title { font-weight: 600; font-size: 14px; }
         .match-tabs {
@@ -38,8 +38,8 @@
 <body>
     <div class="top-nav">
         <span class="title">📸 赔率截图</span>
+        <span style="font-size:10px;opacity:0.6;position:absolute;left:50%;transform:translateX(-50%)">赔率仅供参考，按实际赔率为准</span>
     </div>
-    <div style="background:#0a2016;color:white;text-align:center;padding:0 12px 6px;font-size:10px;opacity:0.7">赔率仅供参考，按实际赔率为准</div>
     <div class="match-tabs" id="matchTabs">
         <span class="active" data-img="mex-s.jpg" onclick="switchTab(this)">🇲🇽 墨西哥 vs 南非</span>
         <span data-img="kor-c.jpg" onclick="switchTab(this)">🇰🇷 韩国 vs 捷克</span>

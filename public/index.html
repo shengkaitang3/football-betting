@@ -229,8 +229,8 @@
   </div>
 </div>
 
-<!-- 次级导航 -->
-<div class="sub-nav" id="playCategory">
+<!-- 次级导航（显示模式用） -->
+<div class="sub-nav" id="displaySubNav">
   <span class="active" data-cat="common" onclick="switchCategory('common')">全部</span>
   <span data-cat="rangqiu" onclick="switchCategory('rangqiu')">让球&大小</span>
   <span data-cat="score" onclick="switchCategory('score')">波胆</span>
@@ -268,8 +268,8 @@
   </div>
 
   <!-- 预置比赛（默认隐藏） -->
-  <div id="presetMatches" style="display:none;margin-bottom:10px">
-    <div style="font-size:11px;color:var(--muted);margin-bottom:4px">2026世界杯 小组赛第1轮</div>
+  <div id="presetMatches" style="display:none;margin-bottom:8px">
+    <div style="font-size:11px;color:#999;margin-bottom:4px;padding:0 2px">2026世界杯 小组赛第1轮</div>
     <div class="preset-match" data-home="墨西哥" data-away="南非" onclick="pickMatch(this)">
       <span style="color:var(--gold);font-size:10px">6/12 03:00</span>
       <span>墨西哥 vs 南非</span>
@@ -329,6 +329,16 @@
       <span style="color:var(--gold);font-size:10px">6/16 22:00</span>
       <span>沙特 vs 乌拉圭</span>
     </div>
+  </div>
+
+  <!-- 子导航（下单专用） -->
+  <div class="sub-nav" id="orderSubNav" style="margin:0 -12px 6px;border-top:1px solid #ddd">
+    <span class="active" data-cat="common" onclick="switchCategory('common')">全部</span>
+    <span data-cat="rangqiu" onclick="switchCategory('rangqiu')">让球&大小</span>
+    <span data-cat="score" onclick="switchCategory('score')">波胆</span>
+    <span data-cat="half" onclick="switchCategory('half')">半场</span>
+    <span data-cat="common" onclick="switchCategory('common')">独赢</span>
+    <span data-cat="rangqiu" onclick="switchCategory('rangqiu')">特殊投注</span>
   </div>
 
   <!-- 玩法选项 -->

@@ -6,197 +6,204 @@
 <title>⚽ 竞彩足球下单</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  :root {
-    --bg: #f3f4f6; --card: #ffffff; --card2: #f9fafb;
-    --accent: #2563eb; --red: #dc2626; --green: #16a34a; --gold: #d97706;
-    --text: #111827; --muted: #6b7280; --border: #e5e7eb;
-  }
   body {
-    background: var(--bg); color: var(--text);
-    font-family: -apple-system, 'Microsoft YaHei UI', sans-serif;
-    padding: 0; min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #f4f4f4; color: #333333; font-size: 13px;
+    -webkit-tap-highlight-color: transparent; min-height: 100vh; padding-bottom: 40px;
   }
-  .container { max-width: 480px; margin: 0 auto; padding: 10px; }
+  .container { max-width: 480px; margin: 0 auto; }
 
+  /* ======= 顶部导航栏 ======= */
+  .top-nav {
+    background: #433125; color: white; padding: 10px 12px 6px; position: sticky; top: 0; z-index: 50;
+  }
+  .top-nav .tabs {
+    display: flex; gap: 20px; font-size: 14px; font-weight: 500; padding-top: 4px; overflow-x: auto;
+  }
+  .top-nav .tabs span { white-space: nowrap; padding-bottom: 6px; opacity: 0.7; cursor: pointer; }
+  .top-nav .tabs span.active { color: #dfb67b; border-bottom: 2px solid #dfb67b; opacity: 1; }
+
+  /* ======= 次级导航 ======= */
+  .sub-nav {
+    background: #eaeaea; border-bottom: 1px solid #dddddd;
+    display: flex; overflow-x: auto; padding: 8px 10px; gap: 0; font-size: 12px; color: #666;
+  }
+  .sub-nav span { padding: 0 12px; white-space: nowrap; cursor: pointer; }
+  .sub-nav span + span { border-left: 1px solid #ccc; }
+  .sub-nav span.active { color: #333; font-weight: 700; }
+
+  /* ======= 头部信息 ======= */
   .header {
     display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 14px; flex-wrap: wrap; gap: 8px;
+    padding: 8px 10px 0; flex-wrap: wrap; gap: 6px;
   }
-  .header h1 { font-size: 20px; display: flex; align-items: center; gap: 8px; }
-  .header h1 span { color: var(--accent); }
+  .header h1 { font-size: 16px; display: flex; align-items: center; gap: 6px; }
+  .header h1 span { color: #2563eb; }
+  .stats { display: flex; gap: 4px; }
+  .stats div { background: white; padding: 3px 8px; border-radius: 6px; border: 1px solid #eee; text-align: center; min-width: 44px; }
+  .stats .num { font-size: 13px; font-weight: bold; display: block; }
+  .stats .label { font-size: 9px; color: #999; }
+  .profit { color: #16a34a; } .loss { color: #dc2626; }
 
-  .stats {
-    display: flex; gap: 6px; font-size: 11px; flex-wrap: wrap;
-  }
-  .stats div {
-    background: var(--card); padding: 4px 10px; border-radius: 8px;
-    border: 1px solid var(--border); text-align: center; min-width: 50px;
-  }
-  .stats .num { font-size: 14px; font-weight: bold; display: block; }
-  .stats .label { font-size: 9px; color: var(--muted); }
-  .profit { color: var(--green); } .loss { color: var(--red); }
-
+  /* ======= 下单卡片 ======= */
   .form-card {
-    background: var(--card); border-radius: 12px; padding: 12px;
-    border: 1px solid var(--border); margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    background: white; border-radius: 6px; margin: 8px 10px; overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
   }
-  .form-card h2 { font-size: 13px; margin-bottom: 10px; color: var(--text); display: flex; align-items: center; gap: 6px; font-weight: 600; }
+  .form-card .card-title {
+    background: #f9f9f9; padding: 8px 12px; font-weight: 700; font-size: 13px;
+    border-bottom: 1px solid #eee;
+  }
+  .form-card .card-body { padding: 10px 12px; }
 
-  .form-row {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px;
-  }
-  .form-row-3 {
-    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px;
-  }
-  .form-group { display: flex; flex-direction: column; gap: 3px; }
-  .form-group label { font-size: 11px; color: var(--muted); }
-  .form-group input, .form-group select {
-    background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
-    padding: 7px 8px; color: var(--text); font-size: 13px; outline: none; width: 100%;
-  }
-  .form-group input:focus, .form-group select:focus { border-color: var(--accent); }
+  .name-panel { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
+  .name-panel .current-label { font-size: 12px; color: #666; }
+  .name-panel input { flex: 1; border: 1px solid #ddd; border-radius: 4px; padding: 6px 8px; font-size: 13px; outline: none; }
 
-  .btn {
-    background: var(--accent); color: #0f0f1a; border: none; border-radius: 6px;
-    padding: 9px 18px; font-size: 13px; font-weight: 600; cursor: pointer;
-  }
-  .btn-danger { background: var(--red); color: white; }
-  .btn-outline {
-    background: transparent; border: 1px solid var(--border); color: var(--text);
-    font-size: 12px; padding: 6px 12px;
-  }
-  .btn-sm { padding: 5px 10px; font-size: 11px; border-radius: 4px; }
-  .form-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
-  .calc-hint { font-size: 11px; color: var(--muted); }
-  .calc-val { color: var(--gold); font-weight: bold; }
+  .match-input-row { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; }
+  .match-input-row input { flex: 1; border: 1px solid #ddd; border-radius: 4px; padding: 6px 8px; font-size: 13px; outline: none; }
+  .match-input-row .vs { color: #999; font-size: 12px; }
+  .match-input-row .preset-btn { font-size: 11px; color: #2563eb; cursor: pointer; white-space: nowrap; }
 
-  .filter-bar {
-    display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px;
-  }
-  .filter-bar input, .filter-bar select {
-    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
-    padding: 6px 10px; color: var(--text); font-size: 12px; outline: none;
-  }
-
-  .table-wrap {
-    background: var(--card); border-radius: 12px; border: 1px solid var(--border); overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-  }
-  table { width: 100%; border-collapse: collapse; }
-  th {
-    background: var(--card2); padding: 8px 8px; text-align: left; color: var(--muted);
-    font-weight: 500; white-space: nowrap; position: sticky; top: 0; font-size: 11px;
-  }
-  td { padding: 8px 8px; border-top: 1px solid var(--border); white-space: nowrap; }
-  .tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 500; }
-  .tag-win { background: rgba(46,213,115,0.2); color: var(--green); }
-  .tag-lose { background: rgba(255,71,87,0.2); color: var(--red); }
-  .tag-pending { background: rgba(255,165,2,0.2); color: var(--gold); }
-  .tag-cancel { background: rgba(136,136,160,0.2); color: var(--muted); }
-  .empty-row td { text-align: center; color: var(--muted); padding: 30px; }
-  .del-btn { cursor: pointer; opacity: 0.4; }
-  .del-btn:hover { opacity: 1; color: var(--red); }
-  .author-tag { font-size: 10px; color: var(--muted); }
-
-  .name-chip {
-    display: inline-block; background: var(--card2); border-radius: 10px;
-    padding: 4px 10px; font-size: 11px; margin: 2px; border: 1px solid var(--border);
-    cursor: pointer;
-  }
-  .name-chip.active { border-color: var(--accent); color: var(--accent); }
-
-  .toast {
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background: var(--card); border: 1px solid var(--accent); border-radius: 8px;
-    padding: 10px 20px; font-size: 13px; z-index: 100;
-    display: none; animation: fadeIn 0.3s;
-  }
-  @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; } }
-
-  .modal-overlay {
-    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-    justify-content: center; align-items: center; z-index: 100;
-  }
-  .modal-overlay.show { display: flex; }
-  .modal {
-    background: var(--card); border-radius: 12px; padding: 20px; max-width: 360px; width: 90%; border: 1px solid var(--border);
-  }
-  .modal h3 { font-size: 16px; margin-bottom: 10px; }
-  .modal p { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
-  .modal .btn-group { display: flex; gap: 8px; justify-content: flex-end; }
-
-  .match-card {
-    background: var(--card2); border-radius: 8px; padding: 8px 12px;
-    margin-bottom: 8px; border: 1px solid var(--border);
-    display: flex; justify-content: space-between; align-items: center;
-    cursor: pointer; transition: border-color 0.2s;
-  }
-  .match-card:hover { border-color: var(--accent); }
-  .match-card .teams { font-size: 13px; font-weight: 500; }
-  .match-card .league { font-size: 10px; color: var(--muted); }
-  .match-card .time { font-size: 10px; color: var(--gold); }
-  .match-card.selected { border-color: var(--accent); background: rgba(0,212,170,0.1); }
-
-  /* 显示模式表格更大 */
-  .display-mode td { font-size: 15px; padding: 12px 10px; }
-  .display-mode th { font-size: 14px; }
-
+  /* ======= 预置比赛列表 ======= */
+  #presetMatches { padding: 0 12px 8px; }
   .preset-match {
-    display: flex; gap: 8px; align-items: center;
-    background: var(--card2); border-radius: 6px; padding: 5px 10px;
-    margin-bottom: 3px; border: 1px solid var(--border);
-    cursor: pointer; font-size: 12px; transition: border-color 0.15s;
+    display: flex; gap: 8px; align-items: center; padding: 6px 8px;
+    border-bottom: 1px solid #eee; cursor: pointer; font-size: 12px;
   }
-  .preset-match:hover { border-color: var(--accent); }
-  .preset-match.selected { border-color: var(--accent); background: rgba(0,212,170,0.1); }
-  .preset-match span { white-space: nowrap; }
+  .preset-match:hover { background: #f9f9f9; }
+  .preset-match:last-child { border-bottom: none; }
 
+  /* ======= 玩法分类按钮 ======= */
   .play-category {
-    display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px;
+    display: flex; gap: 0; padding: 8px 12px; background: #eaeaea;
+    border-bottom: 1px solid #ddd; overflow-x: auto;
   }
   .play-cat-btn {
-    background: var(--card2); border: 1px solid var(--border); border-radius: 16px;
-    padding: 5px 14px; font-size: 12px; cursor: pointer; color: var(--muted);
-    transition: all 0.2s; font-weight: 500;
+    padding: 4px 14px; font-size: 12px; cursor: pointer; color: #666; white-space: nowrap;
   }
-  .play-cat-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 1px 3px rgba(37,99,235,0.3); }
+  .play-cat-btn + .play-cat-btn { border-left: 1px solid #ccc; }
+  .play-cat-btn.active { color: #333; font-weight: 700; }
 
+  /* ======= 玩法选项网格 ======= */
   .play-options {
-    display: grid; gap: 0; margin-bottom: 6px; border: 1px solid #eeeeee; border-radius: 6px; overflow: hidden;
+    display: grid; gap: 0; margin: 0 12px 8px;
+    border: 1px solid #eee; border-radius: 4px; overflow: hidden;
   }
   .play-cat-2col { grid-template-columns: 1fr 1fr; }
   .play-cat-3col { grid-template-columns: 1fr 1fr 1fr; }
-  .play-cat-4col { grid-template-columns: 1fr 1fr 1fr 1fr; }
-
   .play-opt-btn {
-    background: white; border: none; border-right: 1px solid #eeeeee; border-bottom: 1px solid #eeeeee;
-    padding: 10px 4px; cursor: pointer; color: #333; text-align: center;
-    display: flex; flex-direction: column; gap: 3px; user-select: none; transition: background 0.1s;
-    outline: none;
+    background: white; border: none; border-right: 1px solid #eee; border-bottom: 1px solid #eee;
+    padding: 10px 4px; cursor: pointer; text-align: center;
+    display: flex; flex-direction: column; gap: 2px; user-select: none;
+    transition: background 0.1s; outline: none;
   }
   .play-cat-2col .play-opt-btn:nth-child(2n) { border-right: none; }
   .play-cat-3col .play-opt-btn:nth-child(3n) { border-right: none; }
   .play-opt-btn .opt-name { font-size: 12px; color: #666; }
   .play-opt-btn .opt-odds { font-size: 15px; font-weight: 700; color: #e1251b; }
   .play-opt-btn:active { background: #eff6ff; }
-  .play-opt-btn.selected { background: #eff6ff; border-color: #2563eb; }
+  .play-opt-btn.selected { background: #eff6ff; }
   .play-opt-btn.selected .opt-odds { color: #2563eb; }
-
   .play-section-title {
     font-size: 11px; color: #999; padding: 6px 8px 4px;
-    border-bottom: 1px solid #eeeeee; grid-column: 1 / -1; background: #fafafa;
-    font-weight: 500;
+    border-bottom: 1px solid #eee; grid-column: 1 / -1; background: #fafafa; font-weight: 500;
   }
 
+  /* ======= 快速投注栏 ======= */
   .quick-bet {
-    display: flex; gap: 8px; align-items: center; margin-top: 8px;
-    padding: 10px 12px; background: var(--card2); border-radius: 10px; border: 1px solid var(--border);
+    padding: 10px 12px; background: #f9f9f9; border-top: 1px solid #eee;
+    display: flex; gap: 8px; align-items: center;
   }
-  .quick-bet label { font-size: 11px; color: var(--muted); white-space: nowrap; }
+  .quick-bet label { font-size: 11px; color: #999; white-space: nowrap; }
   .quick-bet input {
-    background: var(--card); border: 1px solid var(--border); border-radius: 8px;
-    padding: 7px 8px; color: var(--text); font-size: 14px; width: 70px; outline: none;
+    border: 1px solid #ddd; border-radius: 4px; padding: 6px 6px; font-size: 13px; width: 60px; outline: none;
   }
-  .quick-bet input:focus { border-color: var(--accent); }
+  .quick-bet input:focus { border-color: #2563eb; }
+  .quick-bet .btn-submit {
+    background: #2563eb; color: white; border: none; border-radius: 4px;
+    padding: 7px 16px; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+
+  /* ======= 筛选栏 ======= */
+  .filter-bar {
+    display: flex; gap: 6px; align-items: center; padding: 8px 10px 4px; flex-wrap: wrap;
+  }
+  .filter-bar select, .filter-bar input {
+    background: white; border: 1px solid #ddd; border-radius: 4px;
+    padding: 5px 8px; font-size: 12px; outline: none; color: #333;
+  }
+  .filter-bar .btn-sm {
+    background: transparent; border: 1px solid #ddd; border-radius: 4px;
+    padding: 5px 10px; font-size: 11px; cursor: pointer; color: #666;
+  }
+  .filter-bar .btn-sm:hover { background: #f0f0f0; }
+  .filter-bar .filter-count { font-size: 11px; color: #999; margin-left: auto; }
+  .filter-bar .btn-danger-sm { background: #dc2626; color: white; border: none; border-radius: 4px; padding: 5px 10px; font-size: 11px; cursor: pointer; }
+
+  /* ======= 表格 ======= */
+  .table-wrap {
+    background: white; border-radius: 6px; border: 1px solid #eee;
+    margin: 0 10px 8px; overflow-x: auto;
+  }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th {
+    background: #f9f9f9; padding: 7px 8px; text-align: left; color: #999;
+    font-weight: 500; white-space: nowrap; font-size: 11px;
+  }
+  td { padding: 7px 8px; border-top: 1px solid #eee; white-space: nowrap; }
+  .tag { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 10px; font-weight: 500; }
+  .tag-win { background: rgba(22,163,74,0.15); color: #16a34a; }
+  .tag-lose { background: rgba(220,38,38,0.15); color: #dc2626; }
+  .tag-pending { background: rgba(217,119,6,0.15); color: #d97706; }
+  .tag-cancel { background: rgba(153,153,153,0.15); color: #999; }
+  .empty-row td { text-align: center; color: #999; padding: 24px; }
+  .del-btn { cursor: pointer; opacity: 0.3; font-size: 14px; }
+  .del-btn:hover { opacity: 1; color: #dc2626; }
+
+  .display-mode td { font-size: 14px; padding: 10px 8px; }
+  .display-mode th { font-size: 12px; }
+
+  /* ======= 底部按钮 ======= */
+  .bottom-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; background: white;
+    border-top: 1px solid #ddd; display: flex; justify-content: center;
+    gap: 10px; padding: 8px 10px; z-index: 50;
+  }
+  .bottom-bar .mode-btn {
+    border-radius: 20px; padding: 6px 18px; font-size: 12px; cursor: pointer; font-weight: 500;
+  }
+
+  /* ======= Toast ======= */
+  .toast {
+    position: fixed; bottom: 60px; left: 50%; transform: translateX(-50%);
+    background: #333; color: white; border-radius: 6px;
+    padding: 8px 16px; font-size: 12px; z-index: 100;
+    display: none; animation: fadeIn 0.3s;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; } }
+
+  /* ======= 弹窗 ======= */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    justify-content: center; align-items: center; z-index: 100;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: white; border-radius: 10px; padding: 16px; max-width: 360px; width: 90%;
+  }
+  .modal h3 { font-size: 15px; margin-bottom: 8px; }
+  .modal p { color: #666; font-size: 12px; margin-bottom: 12px; }
+  .modal .btn-group { display: flex; gap: 8px; justify-content: flex-end; }
+  .modal .btn { border-radius: 6px; padding: 6px 14px; font-size: 12px; cursor: pointer; border: none; }
+  .modal .btn-primary { background: #2563eb; color: white; }
+  .modal .btn-default { background: #f0f0f0; color: #333; }
+  .modal .btn-danger { background: #dc2626; color: white; }
+
+  /* ======= 预设比赛卡片 ======= */
+  .preset-list { padding: 0 10px 8px; }
+  .preset-title { font-size: 11px; color: #999; margin-bottom: 4px; padding: 0 2px; }
+  .quick-bet input:focus { border-color: #2563eb; }
 
   .name-panel {
     display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; align-items: center;
@@ -211,8 +218,29 @@
 <body>
 <div class="container">
 
+<!-- 顶部导航 -->
+<div class="top-nav">
+  <div class="tabs">
+    <span class="active">滚球</span>
+    <span>今日</span>
+    <span>2026-06-11</span>
+    <span>早盘</span>
+    <span>串关</span>
+  </div>
+</div>
+
+<!-- 次级导航 -->
+<div class="sub-nav" id="playCategory">
+  <span class="active" data-cat="common" onclick="switchCategory('common')">全部</span>
+  <span data-cat="rangqiu" onclick="switchCategory('rangqiu')">让球&大小</span>
+  <span data-cat="score" onclick="switchCategory('score')">波胆</span>
+  <span data-cat="half" onclick="switchCategory('half')">半场</span>
+  <span data-cat="common" onclick="switchCategory('common')">独赢</span>
+  <span data-cat="rangqiu" onclick="switchCategory('rangqiu')">特殊投注</span>
+</div>
+
 <div class="header">
-    <h1>⚽ <span>滚球</span>下单</h1>
+    <h1>⚽ <span>朱老板带大家吃肉！</span></h1>
     <div class="stats" id="statsBar">
     <div><span class="num" id="sTotal">-</span><span class="label">单数</span></div>
     <div><span class="num" id="sWinRate">-</span><span class="label">胜率</span></div>
@@ -221,8 +249,9 @@
 </div>
 
 <div class="form-card" id="orderForm" style="display:none">
-  <h2>📝 新订单</h2>
-
+  <div class="card-title">📝 新订单</div>
+  <div class="card-body">
+  <!-- 名字填写 -->
   <!-- 名字填写 -->
   <div class="name-panel">
     <span class="current-label">谁下的：</span>
@@ -231,21 +260,11 @@
   </div>
 
   <!-- 自定义比赛 -->
-  <div style="margin-bottom:10px">
-    <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
-      <span style="font-size:11px;color:var(--muted)">主队</span>
-      <span style="font-size:11px;color:var(--muted)">客队</span>
-      <span style="margin-left:auto;font-size:10px;color:var(--gold);cursor:pointer" onclick="togglePresetMatches()">📅 选比赛</span>
-    </div>
-    <div style="display:flex;gap:6px;align-items:center">
-      <input type="text" id="homeTeam" placeholder="主队" maxlength="20"
-        style="width:80px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 8px;color:var(--text);font-size:13px;outline:none"
-        oninput="updateMatch()">
-      <span style="color:var(--muted);font-size:13px">vs</span>
-      <input type="text" id="awayTeam" placeholder="客队" maxlength="20"
-        style="width:80px;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:7px 8px;color:var(--text);font-size:13px;outline:none"
-        oninput="updateMatch()">
-    </div>
+  <div class="match-input-row">
+    <input type="text" id="homeTeam" placeholder="主队" oninput="updateMatch()">
+    <span class="vs">vs</span>
+    <input type="text" id="awayTeam" placeholder="客队" oninput="updateMatch()">
+    <span class="preset-btn" onclick="togglePresetMatches()">📅 选比赛</span>
   </div>
 
   <!-- 预置比赛（默认隐藏） -->
@@ -312,35 +331,23 @@
     </div>
   </div>
 
-  <!-- 玩法大类 -->
-  <div style="margin-bottom:6px">
-    <span style="font-size:11px;color:var(--muted)">玩法大类</span>
-  </div>
-  <div class="play-category" id="playCategory">
-    <span class="play-cat-btn active" data-cat="common" onclick="switchCategory('common')">常用</span>
-    <span class="play-cat-btn" data-cat="rangqiu" onclick="switchCategory('rangqiu')">让球盘</span>
-    <span class="play-cat-btn" data-cat="daxiao" onclick="switchCategory('daxiao')">大小球</span>
-    <span class="play-cat-btn" data-cat="score" onclick="switchCategory('score')">比分</span>
-    <span class="play-cat-btn" data-cat="half" onclick="switchCategory('half')">半全场</span>
-  </div>
-
-  <!-- 具体选项 -->
-  <div style="margin-bottom:6px">
-    <span style="font-size:11px;color:var(--muted)">具体选项</span>
-  </div>
+  <!-- 玩法选项 -->
+  <div style="font-size:11px;color:#999;padding:2px 12px 4px">具体选项</div>
   <div class="play-options" id="playOptions"></div>
 
-  <input type="hidden" id="orderDate">
   <!-- 赔率和金额快速填 -->
   <div class="quick-bet">
     <label>赔率</label>
     <input type="number" id="odds" step="0.01" min="1" placeholder="2.00" value="1.00">
-    <label>金额 ¥</label>
+    <label>¥</label>
     <input type="number" id="betAmount" step="10" min="1" placeholder="100" value="">
     <span style="flex:1"></span>
-    <button class="btn" onclick="addOrder()" style="white-space:nowrap">➕ 下单</button>
+    <button class="btn-submit" onclick="addOrder()">➕ 下单</button>
   </div>
-  <div style="font-size:11px;color:var(--muted);margin-top:4px" id="calcHint">输入金额自动算奖金</div>
+  <div style="font-size:10px;color:#999;padding:4px 12px 8px" id="calcHint">输入金额自动算奖金</div>
+</div>
+
+<!-- 关闭 card-body -->
 </div>
 
 <div class="filter-bar">
@@ -353,9 +360,9 @@
     <option value="中">✅ 已中</option>
     <option value="未中">❌ 未中</option>
   </select>
-  <button class="btn btn-sm btn-outline" onclick="document.getElementById('filterAuthor').value='';document.getElementById('filterResult').value='全部';loadData()">清除</button>
+  <button class="btn-sm" onclick="document.getElementById('filterAuthor').value='';document.getElementById('filterResult').value='全部';loadData()">清除</button>
   <span style="margin-left:auto;font-size:11px;color:var(--muted)" id="filterCount"></span>
-  <button class="btn btn-sm btn-outline" id="clearAllBtn" onclick="showClearModal()">🗑 清空</button>
+  <button class="btn-danger-sm" id="clearAllBtn" onclick="showClearModal()">🗑 清空</button>
 </div>
 
 <div class="table-wrap">
@@ -369,12 +376,12 @@
 
 </div>
 
-<div style="text-align:center;margin-top:14px">
-    <span onclick="toggleMode()" style="display:inline-block;font-size:13px;cursor:pointer;color:var(--gold);border:1px solid var(--gold);border-radius:14px;padding:6px 20px">✏️ 下单模式</span>
-    <span onclick="showInsider()" style="display:inline-block;font-size:13px;cursor:pointer;color:var(--red);border:1px solid var(--red);border-radius:14px;padding:6px 20px;margin-left:6px">🔒 内幕信息</span>
+<div class="bottom-bar">
+    <span class="mode-btn" style="background:#f0f0f0;color:#333" onclick="toggleMode()">✏️ 下单</span>
+    <span class="mode-btn" style="background:#f0f0f0;color:#333" onclick="showInsider()">🔒 内幕</span>
 </div>
 
-<div class="toast" id="toast"></div>
+<input type="hidden" id="orderDate">
 
 <div class="modal-overlay" id="clearModal">
   <div class="modal">
@@ -471,7 +478,7 @@ function selectMatch(el) {
 // ======================= 玩法切换 =======================
 function switchCategory(cat) {
   currentCategory = cat;
-  document.querySelectorAll('.play-cat-btn').forEach(b => {
+  document.querySelectorAll('.sub-nav span').forEach(b => {
     b.classList.toggle('active', b.dataset.cat === cat);
   });
   selectedOption = '';
@@ -750,10 +757,11 @@ function toggleMode() {
   isOrderMode = !isOrderMode;
   document.getElementById('orderForm').style.display = isOrderMode ? 'block' : 'none';
   document.querySelector('.header h1').innerHTML = isOrderMode ? '⚽ <span>滚球</span>下单' : '⚽ <span>朱老板带大家吃肉！</span>';
-  document.querySelector('[onclick="toggleMode()"]').textContent = isOrderMode ? '📺 显示模式' : '✏️ 下单模式';
   document.querySelector('.table-wrap').classList.toggle('display-mode', !isOrderMode);
   document.getElementById('clearAllBtn').style.display = isOrderMode ? 'inline-block' : 'none';
-  loadOrders(); // 重新渲染表格（显示模式无下拉框和删除）
+  const btns = document.querySelectorAll('.bottom-bar .mode-btn');
+  if (btns.length >= 2) btns[0].textContent = isOrderMode ? '📺 显示' : '✏️ 下单';
+  loadOrders();
 }
 
 // ======================= 内幕信息 =======================

@@ -56,12 +56,12 @@
         <span style="font-size:12px;font-weight:700;color:#fbbf24" id="statusText">加载中...</span>
     </div>
     <div class="match-tabs" id="matchTabs">
+        <span class="ai-btn" onclick="toggleAI()">🤖 AI分析</span>
         <span class="active" data-img="mex-s.jpg" onclick="switchTab(this)">🇲🇽 墨西哥 vs 南非</span>
         <span data-img="kor-c.jpg" onclick="switchTab(this)">🇰🇷 韩国 vs 捷克</span>
         <span data-img="can-bos.jpg" onclick="switchTab(this)">🇨🇦 加拿大 vs 波黑</span>
         <span data-img="qat-sui.jpg" onclick="switchTab(this)">🇶🇦 卡塔尔 vs 瑞士</span>
         <span data-img="champion.jpg" onclick="switchTab(this)">🏆 冠军</span>
-        <span class="ai-btn" onclick="toggleAI()">🤖 AI分析</span>
     </div>
     <div class="screenshot-wrap" id="screenshotWrap">
         <img id="oddsImage" src="mex-s.jpg" alt="赔率截图" style="width:100%" onload="document.getElementById('statusText').textContent='就绪'" onerror="document.getElementById('statusText').textContent='加载失败'">

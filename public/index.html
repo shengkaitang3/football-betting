@@ -17,28 +17,30 @@
 
         .match-tabs {
             background: #eaeaea; border-bottom: 1px solid #ddd;
-            display: flex; overflow-x: auto; padding: 8px 10px;
-            font-size: 12px; color: #666;
+            display: flex; overflow-x: auto; padding: 6px 10px;
+            font-size: 12px; color: #666; gap: 4px;
         }
         .match-tabs span {
-            padding: 4px 14px; white-space: nowrap; cursor: pointer;
-            border-radius: 16px; transition: all 0.2s;
+            padding: 6px 16px; white-space: nowrap; cursor: pointer;
+            border-radius: 20px; transition: all 0.2s;
+            background: white; border: 1px solid #ddd;
         }
         .match-tabs span.active {
-            background: #0a2016; color: white; font-weight: 600;
+            background: #0a2016; color: white; border-color: #0a2016; font-weight: 600;
         }
 
         .screenshot-wrap {
-            max-width: 480px; margin: 0 auto;
+            max-width: 480px; margin: 0 auto; min-height: 100vh;
         }
-        .screenshot-wrap img {
-            width: 100%; display: block;
+        .screenshot-wrap .screenshot-img {
+            width: 100%; display: block; height: auto;
         }
 
         .bottom-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: rgba(0,0,0,0.7); color: white; text-align: center;
-            padding: 8px; font-size: 11px; backdrop-filter: blur(10px);
+            padding: 6px; font-size: 11px; backdrop-filter: blur(10px);
+            z-index: 50;
         }
     </style>
 </head>
@@ -54,19 +56,20 @@
         <span data-img="kor-cze.jpg" onclick="switchTab(this)">🇰🇷 韩国 vs 捷克</span>
     </div>
 
-    <div class="screenshot-wrap">
-        <img id="oddsImage" src="mex-sa.jpg" alt="赔率截图">
+    <div class="screenshot-wrap" id="screenshotWrap">
+        <img id="oddsImage" class="screenshot-img" src="mex-sa.jpg" alt="赔率截图" onerror="this.alt='图片加载失败'">
     </div>
 
     <div class="bottom-bar">
-        📸 截图模式
+        📸 截图模式 · 点上方标签切换比赛
     </div>
 
     <script>
         function switchTab(el) {
             document.querySelectorAll('#matchTabs span').forEach(s => s.classList.remove('active'));
             el.classList.add('active');
-            document.getElementById('oddsImage').src = el.dataset.img;
+            const img = document.getElementById('oddsImage');
+            img.src = el.dataset.img;
         }
     </script>
 

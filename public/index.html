@@ -189,7 +189,7 @@
             <!-- 金额输入 -->
             <div class="px-4 py-3 border-b border-[#eee]">
                 <div class="flex items-center gap-2">
-                    <input type="number" id="betAmount" placeholder="输入下注金额" class="flex-1 border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-blue-500" value="">
+                    <input type="text" inputmode="decimal" id="betAmount" placeholder="输入下注金额" class="flex-1 border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-blue-500" value="" oninput="this.value=this.value.replace(/[^0-9.]/g,'').replace(/(\\..*)\\./g,'$1');calcPayout()">
                     <span class="text-blue-500 text-xs whitespace-nowrap cursor-pointer" onclick="document.getElementById('betAmount').value='10000';calcPayout()">最大投注金额</span>
                 </div>
                 <div class="text-xs text-gray-500 mt-2">

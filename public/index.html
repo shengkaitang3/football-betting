@@ -39,6 +39,7 @@
     <div class="top-nav">
         <span class="title">📸 赔率截图</span>
         <span style="font-size:10px;opacity:0.6;position:absolute;left:50%;transform:translateX(-50%)">赔率仅供参考，按实际赔率为准</span>
+        <span style="font-size:10px;opacity:0.6" id="statusText">加载中...</span>
     </div>
     <div class="match-tabs" id="matchTabs">
         <span class="active" data-img="mex-s.jpg" onclick="switchTab(this)">🇲🇽 墨西哥 vs 南非</span>
@@ -50,13 +51,13 @@
     <div class="screenshot-wrap">
         <img id="oddsImage" src="mex-s.jpg" alt="赔率截图" style="width:100%" onload="document.getElementById('statusText').textContent='就绪'" onerror="document.getElementById('statusText').textContent='加载失败'">
     </div>
-    <div class="bottom-bar" id="statusText">📸 截图模式 · 第一次加载较慢请耐心等待 🌸</div>
+    <div class="bottom-bar">📸 截图模式 · 第一次加载较慢请耐心等待 🌸</div>
     <script>
         function switchTab(el) {
             document.querySelectorAll('#matchTabs span').forEach(s => s.classList.remove('active'));
             el.classList.add('active');
             const img = document.getElementById('oddsImage');
-            document.getElementById('statusText').textContent = '📸 加载中...';
+            document.getElementById('statusText').textContent = '加载中...';
             img.src = el.dataset.img;
         }
     </script>

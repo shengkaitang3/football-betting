@@ -67,11 +67,15 @@
                     <div class="text-4xl font-bold">0</div>
                 </div>
                 <div class="text-center">
+                    <div class="text-[10px] opacity-60 vs-text">VS</div>
+                    <div class="text-xl font-bold text-[#fbbf24]" id="countdown">--:--:--</div>
+                </div>
+                <div class="text-center">
                     <div class="text-xs opacity-80">南非</div>
                     <div class="text-4xl font-bold">0</div>
                 </div>
             </div>
-            <div class="text-[10px] opacity-60 mb-2">15:03 · 第1轮</div>
+            <div class="text-[10px] opacity-60 mb-2" id="matchStatus">距离开赛</div>
             <div class="bg-black/50 rounded-lg px-4 py-1.5 flex gap-4 text-[10px] text-white/80">
                 <span>进攻<br><strong class="text-white text-xs">0</strong></span>
                 <span>危险进攻<br><strong class="text-white text-xs">0</strong></span>
@@ -250,6 +254,43 @@
         });
 
         // 切换比赛
+        const matchTimes = {
+            '墨西哥 vs 南非': { h: 3, m: 0 },
+            '韩国 vs 捷克': { h: 10, m: 0 },
+            '加拿大 vs 波黑': { h: 3, m: 0, d: 1 },
+            '美国 vs 巴拉圭': { h: 9, m: 0, d: 1 },
+            '卡塔尔 vs 瑞士': { h: 3, m: 0, d: 2 },
+            '荷兰 vs 日本': { h: 20, m: 0, d: 2 }
+        };
+        let countdownInterval;
+
+        function startCountdown(matchKey) {
+            if (countdownInterval) clearInterval(countdownInterval);
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const mt = matchTimes[matchKey] || { h: 3, m: 0 };
+            let target = new Date(today);
+            target.setHours(mt.h, mt.m, 0, 0);
+            if (mt.d) target.setDate(target.getDate() + mt.d);
+
+            function tick() {
+                const diff = target - new Date();
+                if (diff <= 0) {
+                    document.getElementById('countdown').textContent = '00:00:00';
+                    document.getElementById('matchStatus').textContent = '比赛中';
+                    return;
+                }
+                const h = Math.floor(diff / 3600000);
+                const m = Math.floor((diff % 3600000) / 60000);
+                const s = Math.floor((diff % 60000) / 1000);
+                document.getElementById('countdown').textContent =
+                    String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+                document.getElementById('matchStatus').textContent = '距离开赛';
+            }
+            tick();
+            countdownInterval = setInterval(tick, 1000);
+        }
+
         function switchMatch(el) {
             document.querySelectorAll('#matchTabs span').forEach(s => {
                 s.classList.remove('text-[#333]', 'font-bold', 'border-b-2', 'border-[#333]');
@@ -257,12 +298,14 @@
             el.classList.add('text-[#333]', 'font-bold', 'border-b-2', 'border-[#333]');
             const match = el.dataset.match;
             const parts = match.split(' vs ');
-            // 更新球场队名
             document.querySelector('.pitch-area-home').textContent = '🇲🇽 ' + parts[0];
             document.querySelector('.pitch-area-away').textContent = parts[1] + ' 🇿🇦';
-            // 更新标题
             document.querySelector('.top-nav-title').textContent = '世界杯2026(美加墨) · ' + match;
+            startCountdown(match);
         }
+
+        // 默认启动
+        startCountdown('墨西哥 vs 南非');
     </script>
 
 </body>

@@ -40,8 +40,14 @@
         .ai-panel .ai-label { color: #666; }
         .ai-panel .ai-highlight { color: #e1251b; font-weight: 700; }
         .ai-panel .ai-green { color: #16a34a; font-weight: 700; }
-        .screenshot-wrap { max-width: 480px; margin: 0 auto; min-height: 100vh; }
+        .screenshot-wrap { max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; }
         .screenshot-wrap img { width: 100%; display: block; height: auto; }
+        .screenshot-wrap .time-tag {
+            position: absolute; top: 6px; right: 6px;
+            background: rgba(0,0,0,0.65); color: #fbbf24;
+            font-size: 10px; font-weight: 600; padding: 3px 8px;
+            border-radius: 10px; backdrop-filter: blur(4px);
+        }
         .bottom-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: rgba(0,0,0,0.7); color: white; text-align: center;
@@ -54,7 +60,6 @@
         <span class="title">📸 赔率截图</span>
         <span style="font-size:10px;opacity:0.6;position:absolute;left:50%;transform:translateX(-50%)">赔率仅供参考，按实际赔率为准</span>
         <span style="font-size:12px;font-weight:700;color:#fbbf24" id="statusText">加载中...</span>
-        <span style="font-size:9px;opacity:0.5;position:absolute;right:12px;bottom:4px" id="updateTime"></span>
     </div>
     <div class="match-tabs" id="matchTabs">
         <span class="ai-btn" onclick="toggleAI()">🤖 AI分析</span>
@@ -64,7 +69,8 @@
         <span data-img="champion.jpg" data-time="" onclick="switchTab(this)">🏆 冠军</span>
     </div>
     <div class="screenshot-wrap" id="screenshotWrap">
-        <img id="oddsImage" src="usa-par.jpg" alt="赔率截图" style="width:100%" onload="document.getElementById('statusText').textContent='就绪';document.getElementById('updateTime').textContent='更新 06/12 13:01'" onerror="document.getElementById('statusText').textContent='加载失败'">
+        <span class="time-tag" id="timeTag">06/12 13:01</span>
+        <img id="oddsImage" src="usa-par.jpg" alt="赔率截图" style="width:100%" onload="document.getElementById('statusText').textContent='就绪'" onerror="document.getElementById('statusText').textContent='加载失败'">
     </div>
     <div class="ai-panel" id="aiPanel">
         <div class="ai-title">🤖 AI分析</div>
@@ -84,8 +90,7 @@
             document.getElementById('aiPanel').classList.remove('show');
             document.getElementById('screenshotWrap').style.display = 'block';
             // 显示更新时间
-            const t = el.dataset.time;
-            document.getElementById('updateTime').textContent = t ? '更新 ' + t : '';
+            document.getElementById('timeTag').textContent = el.dataset.time || '';
         }
         function toggleAI() {
             const panel = document.getElementById('aiPanel');

@@ -54,16 +54,17 @@
         <span class="title">📸 赔率截图</span>
         <span style="font-size:10px;opacity:0.6;position:absolute;left:50%;transform:translateX(-50%)">赔率仅供参考，按实际赔率为准</span>
         <span style="font-size:12px;font-weight:700;color:#fbbf24" id="statusText">加载中...</span>
+        <span style="font-size:9px;opacity:0.5;position:absolute;right:12px;bottom:4px" id="updateTime"></span>
     </div>
     <div class="match-tabs" id="matchTabs">
         <span class="ai-btn" onclick="toggleAI()">🤖 AI分析</span>
-        <span class="active" data-img="usa-par.jpg" onclick="switchTab(this)">🇺🇸 美国 vs 巴拉圭</span>
-        <span data-img="can-bos.jpg" onclick="switchTab(this)">🇨🇦 加拿大 vs 波黑</span>
-        <span data-img="qat-sui.jpg" onclick="switchTab(this)">🇶🇦 卡塔尔 vs 瑞士</span>
-        <span data-img="champion.jpg" onclick="switchTab(this)">🏆 冠军</span>
+        <span class="active" data-img="usa-par.jpg" data-time="06/12 13:01" onclick="switchTab(this)">🇺🇸 美国 vs 巴拉圭</span>
+        <span data-img="can-bos.jpg" data-time="06/12 13:01" onclick="switchTab(this)">🇨🇦 加拿大 vs 波黑</span>
+        <span data-img="qat-sui.jpg" data-time="" onclick="switchTab(this)">🇶🇦 卡塔尔 vs 瑞士</span>
+        <span data-img="champion.jpg" data-time="" onclick="switchTab(this)">🏆 冠军</span>
     </div>
     <div class="screenshot-wrap" id="screenshotWrap">
-        <img id="oddsImage" src="usa-par.jpg" alt="赔率截图" style="width:100%" onload="document.getElementById('statusText').textContent='就绪'" onerror="document.getElementById('statusText').textContent='加载失败'">
+        <img id="oddsImage" src="usa-par.jpg" alt="赔率截图" style="width:100%" onload="document.getElementById('statusText').textContent='就绪';document.getElementById('updateTime').textContent='更新 06/12 13:01'" onerror="document.getElementById('statusText').textContent='加载失败'">
     </div>
     <div class="ai-panel" id="aiPanel">
         <div class="ai-title">🤖 AI分析</div>
@@ -82,6 +83,9 @@
             img.src = el.dataset.img;
             document.getElementById('aiPanel').classList.remove('show');
             document.getElementById('screenshotWrap').style.display = 'block';
+            // 显示更新时间
+            const t = el.dataset.time;
+            document.getElementById('updateTime').textContent = t ? '更新 ' + t : '';
         }
         function toggleAI() {
             const panel = document.getElementById('aiPanel');

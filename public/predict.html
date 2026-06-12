@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI 预测</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f4f4f4; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .top-nav {
+            background: #0a2016; color: white; padding: 10px 12px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 50; position: relative;
+        }
+        .top-nav .title { font-weight: 600; font-size: 14px; }
+
+        .match-tabs {
+            background: #eaeaea; border-bottom: 1px solid #ddd;
+            display: flex; overflow-x: auto; padding: 6px 10px;
+            font-size: 12px; color: #666; gap: 4px;
+        }
+        .match-tabs span {
+            padding: 6px 16px; white-space: nowrap; cursor: pointer;
+            border-radius: 20px; transition: all 0.2s;
+            background: white; border: 1px solid #ddd;
+        }
+        .match-tabs span.active {
+            background: #0a2016; color: white; border-color: #0a2016; font-weight: 600;
+        }
+
+        .pred-wrap { max-width: 480px; margin: 0 auto; padding: 10px; }
+
+        .pred-card {
+            background: white; border-radius: 10px; border: 1px solid #eee;
+            margin-bottom: 10px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .pred-card .pred-header {
+            background: #f9f9f9; padding: 10px 12px; font-weight: 700; font-size: 13px;
+            border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;
+        }
+        .pred-card .pred-header .conf-high { color: #16a34a; }
+        .pred-card .pred-header .conf-mid { color: #d97706; }
+        .pred-card .pred-body { padding: 10px 12px; }
+
+        .prob-row {
+            display: flex; gap: 6px; margin-bottom: 8px; align-items: center;
+        }
+        .prob-row .team-name { font-size: 12px; font-weight: 600; width: 60px; text-align: right; }
+        .prob-row .bar-bg {
+            flex: 1; height: 22px; background: #eee; border-radius: 4px; overflow: hidden; position: relative;
+        }
+        .prob-row .bar-fill {
+            height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700; color: white; transition: width 0.3s;
+        }
+        .prob-row .prob-num { font-size: 14px; font-weight: 700; width: 35px; text-align: left; }
+
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 8px 0; }
+        .info-item { background: #f9f9f9; padding: 6px 8px; border-radius: 6px; font-size: 11px; }
+        .info-item .label { color: #999; }
+        .info-item .value { font-weight: 600; }
+
+        .factors { margin: 8px 0; }
+        .factors li { font-size: 11px; color: #666; padding: 2px 0; list-style: none; }
+        .factors li::before { content: "• "; color: #2563eb; }
+
+        .analysis-box {
+            background: #f0f7ff; padding: 8px 10px; border-radius: 6px; font-size: 11px; line-height: 1.7; color: #333; margin: 8px 0;
+        }
+
+        .players { display: flex; gap: 6px; }
+        .players .player-card {
+            flex: 1; background: #f9f9f9; padding: 6px 8px; border-radius: 6px; font-size: 11px;
+        }
+        .players .player-card .name { font-weight: 600; }
+        .players .player-card .reason { color: #666; }
+
+        .bottom-bar {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(0,0,0,0.7); color: white; text-align: center;
+            padding: 6px; font-size: 11px; backdrop-filter: blur(10px); z-index: 50;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-nav">
+        <span class="title">🤖 绿茵神算 · AI预测</span>
+        <span style="font-size:10px;opacity:0.6">仅供娱乐，请勿用于投注</span>
+    </div>
+    <div class="match-tabs" id="matchTabs">
+        <span class="active" data-match="usa-par" onclick="switchMatch(this)">🇺🇸 美国 vs 巴拉圭</span>
+        <span data-match="can-bos" onclick="switchMatch(this)">🇨🇦 加拿大 vs 波黑</span>
+    </div>
+    <div class="pred-wrap" id="predWrap"></div>
+    <div class="bottom-bar">⚽ 2026 世界杯 AI 预测</div>
+
+    <script>
+        const predictions = {
+            'usa-par': {
+                teamA: '美国', teamB: '巴拉圭',
+                winProbA: 48, drawProb: 28, winProbB: 24,
+                score: '1-0',
+                confidence: '中',
+                keyFactors: [
+                    '东道主波切蒂诺首秀，高压迫战术',
+                    '巴拉圭5-4-1大巴，防守极硬',
+                    '美国破大巴历史效率偏低',
+                    '巴拉圭附加赛淘汰意大利晋级'
+                ],
+                analysis: '美国坐拥东道主之利，但巴拉圭是南美最典型的防守反击球队，阿尔法罗的5-4-1体系极为严密。美国在失去戴维斯式爆点的情况下，面对这种铁桶阵恐难打出大比分。预计美国凭借主场气势小胜，但平局概率不可忽视。',
+                players: [
+                    { team: '美国', name: '普利西奇', reason: '前场唯一能制造杀机的爆点' },
+                    { team: '巴拉圭', name: '阿尔米隆', reason: '反击中速度最具威胁' }
+                ]
+            },
+            'can-bos': {
+                teamA: '加拿大', teamB: '波黑',
+                winProbA: 40, drawProb: 32, winProbB: 28,
+                score: '1-1',
+                confidence: '中',
+                keyFactors: [
+                    '戴维斯伤缺，加拿大左路进攻报废',
+                    '波黑附加赛点球淘汰意大利，气质硬',
+                    '加拿大主场首秀，东道主气势加持',
+                    '哲科最后一届世界杯，经验丰富'
+                ],
+                analysis: '加拿大失去绝对核心戴维斯后进攻大打折扣，面对波黑这支将意大利防死的铁血防线，破门难度极大。波黑虽客场作战但擅长防守缠斗，哲科在前场的支点作用关键。双方都有短板，平局概率最高。',
+                players: [
+                    { team: '加拿大', name: '乔纳森·戴维', reason: '戴维斯缺阵后进攻唯一指望' },
+                    { team: '波黑', name: '哲科', reason: '40岁老将最后一舞，支点作用' }
+                ]
+            }
+        };
+
+        function renderPrediction(key) {
+            const d = predictions[key];
+            if (!d) return;
+            const wrap = document.getElementById('predWrap');
+            const confClass = d.confidence === '高' ? 'conf-high' : 'conf-mid';
+            
+            wrap.innerHTML = `
+                <div class="pred-card">
+                    <div class="pred-header">
+                        <span>🇺🇸 ${d.teamA} vs ${d.teamB}</span>
+                        <span class="${confClass}">● ${d.confidence} confidence</span>
+                    </div>
+                    <div class="pred-body">
+                        <div class="prob-row">
+                            <span class="team-name">${d.teamA}</span>
+                            <div class="bar-bg"><div class="bar-fill" style="width:${d.winProbA}%;background:#2563eb">${d.winProbA}%</div></div>
+                            <span class="prob-num">${d.winProbA}</span>
+                        </div>
+                        <div class="prob-row">
+                            <span class="team-name">平局</span>
+                            <div class="bar-bg"><div class="bar-fill" style="width:${d.drawProb}%;background:#6b7280">${d.drawProb}%</div></div>
+                            <span class="prob-num">${d.drawProb}</span>
+                        </div>
+                        <div class="prob-row">
+                            <span class="team-name">${d.teamB}</span>
+                            <div class="bar-bg"><div class="bar-fill" style="width:${d.winProbB}%;background:#dc2626">${d.winProbB}%</div></div>
+                            <span class="prob-num">${d.winProbB}</span>
+                        </div>
+
+                        <div class="info-grid">
+                            <div class="info-item"><span class="label">预测比分</span><br><span class="value">${d.score}</span></div>
+                            <div class="info-item"><span class="label">信心指数</span><br><span class="value">${d.confidence}</span></div>
+                        </div>
+
+                        <div class="factors">
+                            <div style="font-size:11px;font-weight:600;color:#333;margin-bottom:2px">📊 关键因素</div>
+                            ${d.keyFactors.map(f => `<li>${f}</li>`).join('')}
+                        </div>
+
+                        <div class="analysis-box">📝 ${d.analysis}</div>
+
+                        <div style="font-size:11px;font-weight:600;color:#333;margin-bottom:4px">👀 焦点球员</div>
+                        <div class="players">
+                            ${d.players.map(p => `
+                                <div class="player-card">
+                                    <div class="name">${p.name}</div>
+                                    <div class="reason">${p.team} · ${p.reason}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function switchMatch(el) {
+            document.querySelectorAll('#matchTabs span').forEach(s => s.classList.remove('active'));
+            el.classList.add('active');
+            renderPrediction(el.dataset.match);
+        }
+
+        renderPrediction('usa-par');
+    </script>
+</body>
+</html>

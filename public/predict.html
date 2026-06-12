@@ -128,8 +128,6 @@
             </select>
         </div>
 
-        <button class="btn-predict" onclick="doPredict()">🔮 开始预测</button>
-
         <div id="resultArea" style="margin-top:10px"></div>
     </div>
 
@@ -155,10 +153,6 @@
         };
 
         function quickPick() {
-            doPredict();
-        }
-
-        function doPredict() {
             const key = document.getElementById('matchSelect').value;
             if (!key) return;
             const parts = key.split('_vs_');
@@ -237,7 +231,7 @@
         }
 
         // 默认加载美国vs巴拉圭
-        doPredict();
+        quickPick();
     </script>
 </body>
 </html>

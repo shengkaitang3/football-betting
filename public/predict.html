@@ -112,74 +112,20 @@
 
     <div class="selector-wrap">
         <div class="select-card">
-            <div class="label">选择对阵</div>
-            <div class="vs-row">
-                <select id="homeSelect">
-                    <optgroup label="A 组">
-                        <option value="墨西哥">🇲🇽 墨西哥</option>
-                        <option value="南非">🇿🇦 南非</option>
-                        <option value="韩国">🇰🇷 韩国</option>
-                        <option value="捷克">🇨🇿 捷克</option>
-                    </optgroup>
-                    <optgroup label="B 组">
-                        <option value="加拿大">🇨🇦 加拿大</option>
-                        <option value="波黑">🇧🇦 波黑</option>
-                        <option value="卡塔尔">🇶🇦 卡塔尔</option>
-                        <option value="瑞士">🇨🇭 瑞士</option>
-                    </optgroup>
-                    <optgroup label="C 组">
-                        <option value="巴西">🇧🇷 巴西</option>
-                        <option value="摩洛哥">🇲🇦 摩洛哥</option>
-                        <option value="海地">🇭🇹 海地</option>
-                        <option value="苏格兰">🏴󠁧󠁢󠁳󠁣󠁴󠁿 苏格兰</option>
-                    </optgroup>
-                    <optgroup label="D 组">
-                        <option value="美国" selected>🇺🇸 美国</option>
-                        <option value="巴拉圭">🇵🇾 巴拉圭</option>
-                        <option value="澳大利亚">🇦🇺 澳大利亚</option>
-                        <option value="土耳其">🇹🇷 土耳其</option>
-                    </optgroup>
-                </select>
-                <span class="vs-text">VS</span>
-                <select id="awaySelect">
-                    <optgroup label="A 组">
-                        <option value="墨西哥">🇲🇽 墨西哥</option>
-                        <option value="南非">🇿🇦 南非</option>
-                        <option value="韩国">🇰🇷 韩国</option>
-                        <option value="捷克">🇨🇿 捷克</option>
-                    </optgroup>
-                    <optgroup label="B 组">
-                        <option value="加拿大">🇨🇦 加拿大</option>
-                        <option value="波黑">🇧🇦 波黑</option>
-                        <option value="卡塔尔">🇶🇦 卡塔尔</option>
-                        <option value="瑞士">🇨🇭 瑞士</option>
-                    </optgroup>
-                    <optgroup label="C 组">
-                        <option value="巴西">🇧🇷 巴西</option>
-                        <option value="摩洛哥">🇲🇦 摩洛哥</option>
-                        <option value="海地">🇭🇹 海地</option>
-                        <option value="苏格兰">🏴󠁧󠁢󠁳󠁣󠁴󠁿 苏格兰</option>
-                    </optgroup>
-                    <optgroup label="D 组">
-                        <option value="美国">🇺🇸 美国</option>
-                        <option value="巴拉圭" selected>🇵🇾 巴拉圭</option>
-                        <option value="澳大利亚">🇦🇺 澳大利亚</option>
-                        <option value="土耳其">🇹🇷 土耳其</option>
-                    </optgroup>
-                </select>
-            </div>
-        </div>
-
-        <div class="select-card">
-            <div class="label">比赛阶段</div>
-            <div class="stage-btns">
-                <span class="active">小组赛</span>
-                <span>32强</span>
-                <span>16强</span>
-                <span>8强</span>
-                <span>半决赛</span>
-                <span>决赛</span>
-            </div>
+            <div class="label">选择比赛</div>
+            <select id="matchSelect" onchange="quickPick()">
+                <option value="" disabled selected>— 选择一场比赛 —</option>
+                <optgroup label="B 组 · 6/12">
+                    <option value="加拿大_vs_波黑">🇨🇦 加拿大 vs 🇧🇦 波黑</option>
+                    <option value="美国_vs_巴拉圭" selected>🇺🇸 美国 vs 🇵🇾 巴拉圭</option>
+                </optgroup>
+                <optgroup label="B 组 · 6/13">
+                    <option value="卡塔尔_vs_瑞士">🇶🇦 卡塔尔 vs 🇨🇭 瑞士</option>
+                </optgroup>
+                <optgroup label="C 组 · 6/14">
+                    <option value="巴西_vs_摩洛哥">🇧🇷 巴西 vs 🇲🇦 摩洛哥</option>
+                </optgroup>
+            </select>
         </div>
 
         <button class="btn-predict" onclick="doPredict()">🔮 开始预测</button>
@@ -208,13 +154,15 @@
             }
         };
 
-        function doPredict() {
-            const home = document.getElementById('homeSelect').value;
-            const away = document.getElementById('awaySelect').value;
-            if (home === away) { document.getElementById('resultArea').innerHTML = '<div class="pred-card"><div class="pred-body" style="text-align:center;padding:20px;color:#999">不能选择同一支球队</div></div>'; return; }
+        function quickPick() {
+            doPredict();
+        }
 
-            const key = home + '_vs_' + away;
-            const revKey = away + '_vs_' + home;
+        function doPredict() {
+            const key = document.getElementById('matchSelect').value;
+            if (!key) return;
+            const parts = key.split('_vs_');
+            const home = parts[0], away = parts[1];
             let d = predDB[key] || predDB[revKey];
 
             // 如果没找到，生成一个默认预测

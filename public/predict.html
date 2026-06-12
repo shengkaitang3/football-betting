@@ -163,6 +163,7 @@
             if (!key) return;
             const parts = key.split('_vs_');
             const home = parts[0], away = parts[1];
+            const revKey = away + '_vs_' + home;
             let d = predDB[key] || predDB[revKey];
 
             // 如果没找到，生成一个默认预测

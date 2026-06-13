@@ -63,7 +63,6 @@
     </div>
     <div class="match-tabs" id="matchTabs">
         <span class="ai-btn" onclick="toggleAI()">🤖 AI分析</span>
-        <span class="ai-btn" style="background:#0a2016;border-color:#0a2016" onclick="window.open('https://worldcup.youliaoyun.com','_self')">🔮 AI预测</span>
         <span class="active" data-img="can-bos.jpg" data-time="06/12 22:50" onclick="switchTab(this)">🇨🇦 加拿大 vs 波黑</span>
         <span data-img="usa-par.jpg" data-time="06/12 22:50" onclick="switchTab(this)">🇺🇸 美国 vs 巴拉圭</span>
         <span data-img="qat-sui.jpg" data-time="" onclick="switchTab(this)">🇶🇦 卡塔尔 vs 瑞士</span>
@@ -74,26 +73,8 @@
         <img id="oddsImage" src="can-bos.jpg" alt="赔率截图" style="width:100%" onload="document.getElementById('statusText').textContent='就绪'" onerror="document.getElementById('statusText').textContent='加载失败'">
     </div>
     <div class="ai-panel" id="aiPanel">
-        <div class="ai-title">🤖 AI分析 · 更新于 06/12 23:12</div>
-        <div>
-            <div style="font-weight:600;font-size:12px">🇨🇦 加拿大 vs 波黑</div>
-            <div class="ai-section" style="background:#fef2f2;padding:4px 6px;border-radius:4px;margin:4px 0"><span class="ai-label">⚠️ 关键情报：</span>阿方索·戴维斯确认伤缺！加拿大左路进攻报废</div>
-            <div class="ai-section" style="background:#fef2f2;padding:4px 6px;border-radius:4px;margin:4px 0"><span class="ai-label">🎯 最优单一选项：</span><span class="ai-green">全场小2/2.5</span> <span class="ai-highlight">0.83</span> ⭐⭐⭐⭐⭐</div>
-            <div class="ai-section"><span class="ai-label">📊 逻辑：</span>加拿大-0.5临场从0.86降至0.82，热度涌入但独赢仅微降，波黑客胜升至4.90不看好。戴维斯缺阵+波黑死守，进球难超2个。小2/2.5水位持续走低0.87→0.83，庄家信心足。2球走水退本金。</div>
-        </div>
-        <div style="border-top:1px solid #eee;padding-top:6px;margin-top:6px">
-            <div style="font-weight:600;font-size:12px">🇺🇸 美国 vs 巴拉圭</div>
-            <div class="ai-section" style="background:#fef2f2;padding:4px 6px;border-radius:4px;margin:4px 0"><span class="ai-label">🎯 最优单一选项：</span><span class="ai-green">全场小2/2.5</span> <span class="ai-highlight">0.70</span> ⭐⭐⭐⭐⭐</div>
-            <div class="ai-section"><span class="ai-label">📊 逻辑：</span>美国-0.5从1.06升至1.12高水阻上，独赢2.06→2.12升水，平局3.30→3.20降水。庄家不看好美国穿盘，平局概率提升。巴拉圭铁桶阵+美国破大巴效率低，小2/2.5低至0.70全场最低。上半场平局仅2.00，预计0-0开局。</div>
-        </div>
-        <div style="border-top:1px solid #eee;padding-top:6px;margin-top:6px">
-            <div style="font-weight:600;font-size:12px">🔗 稳健2串1方案</div>
-            <div class="ai-section"><span class="ai-label">①</span> 加拿大vs波黑 — 全场小2/2.5 <span class="ai-highlight">0.83</span></div>
-            <div class="ai-section"><span class="ai-label">②</span> 美国vs巴拉圭 — 全场小2/2.5 <span class="ai-highlight">0.70</span></div>
-            <div class="ai-section" style="background:#f0fdf4;padding:4px 6px;border-radius:4px"><span class="ai-label">💰 2串1回报：</span><span class="ai-green">约1.53倍</span> | 两场均有走水保护（2球退本金）</div>
-        </div>
     </div>
-    <div class="bottom-bar">📸 赔率截图 · 第一次加载较慢请耐心等待 🌸 · <a href="https://worldcup.youliaoyun.com" style="color:#fbbf24;text-decoration:none">🤖 AI预测</a></div>
+    <div class="bottom-bar">📸 赔率截图 · 第一次加载较慢请耐心等待 🌸</div>
     <script>
         function switchTab(el) {
             document.querySelectorAll('#matchTabs span').forEach(s => s.classList.remove('active'));

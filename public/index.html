@@ -19,7 +19,7 @@
             font-size: 12px; color: #666; gap: 4px;
             position: sticky; top: 38px; z-index: 50;
         }
-        .match-tabs span, .match-tabs .ai-btn {
+        .match-tabs span {
             padding: 6px 16px; white-space: nowrap; cursor: pointer;
             border-radius: 20px; transition: all 0.2s;
             background: white; border: 1px solid #ddd;
@@ -27,20 +27,6 @@
         .match-tabs span.active {
             background: #0a2016; color: white; border-color: #0a2016; font-weight: 600;
         }
-        .match-tabs .ai-btn {
-            background: #1e40af; color: white; border-color: #1e40af; font-weight: 600;
-        }
-        .ai-panel {
-            display: none; max-width: 480px; margin: 0 auto; padding: 10px;
-            background: white; border-radius: 8px; border: 1px solid #eee;
-            font-size: 12px; line-height: 1.7;
-        }
-        .ai-panel.show { display: block; }
-        .ai-panel .ai-title { font-weight: 700; font-size: 13px; color: #1e40af; margin-bottom: 6px; }
-        .ai-panel .ai-section { margin: 4px 0; }
-        .ai-panel .ai-label { color: #666; }
-        .ai-panel .ai-highlight { color: #e1251b; font-weight: 700; }
-        .ai-panel .ai-green { color: #16a34a; font-weight: 700; }
         .screenshot-wrap { max-width: 480px; margin: 0 auto; min-height: 100vh; position: relative; }
         .screenshot-wrap img { width: 100%; display: block; height: auto; }
         .screenshot-wrap .time-tag {
@@ -63,7 +49,6 @@
         <span style="font-size:12px;font-weight:700;color:#fbbf24" id="statusText">加载中...</span>
     </div>
     <div class="match-tabs" id="matchTabs">
-        <span class="ai-btn" onclick="toggleAI()">🤖 AI分析</span>
         <span class="active" data-img="ger-cura.jpg" data-time="06/14 14:27" onclick="switchTab(this)">🇩🇪 德国 vs 库拉索</span>
         <span data-img="ned-jpn.jpg" data-time="06/14 14:27" onclick="switchTab(this)">🇳🇱 荷兰 vs 日本</span>
         <span data-img="civ-ecu.jpg" data-time="06/14 14:27" onclick="switchTab(this)">🇨🇮 象牙海岸 vs 厄瓜多尔</span>
@@ -73,8 +58,6 @@
         <span class="time-tag" id="timeTag">更新于 06/14 14:27</span>
         <img id="oddsImage" src="ger-cura.jpg" alt="赔率截图" style="width:100%" onload="document.getElementById('statusText').textContent='就绪'" onerror="document.getElementById('statusText').textContent='加载失败'">
     </div>
-    <div class="ai-panel" id="aiPanel">
-    </div>
     <div class="bottom-bar">📸 赔率截图 · 第一次加载较慢请耐心等待 🌸</div>
     <script>
         function switchTab(el) {
@@ -83,20 +66,7 @@
             const img = document.getElementById('oddsImage');
             document.getElementById('statusText').textContent = '加载中...';
             img.src = el.dataset.img;
-            document.getElementById('aiPanel').classList.remove('show');
-            document.getElementById('screenshotWrap').style.display = 'block';
             document.getElementById('timeTag').textContent = el.dataset.time ? '更新于 ' + el.dataset.time : '';
-        }
-        function toggleAI() {
-            const panel = document.getElementById('aiPanel');
-            const wrap = document.getElementById('screenshotWrap');
-            if (panel.classList.contains('show')) {
-                panel.classList.remove('show');
-                wrap.style.display = 'block';
-            } else {
-                panel.classList.add('show');
-                wrap.style.display = 'none';
-            }
         }
     </script>
 </body>

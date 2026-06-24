@@ -35,35 +35,6 @@
             font-size: 16px; font-weight: 800; padding: 6px 20px;
             border-radius: 8px; border: 2px solid #fbbf24; backdrop-filter: blur(4px);
         }
-        /* 群主心水 */
-        .tips-section {
-            max-width: 480px; margin: 12px auto; padding: 0 10px;
-        }
-        .tips-title {
-            background: #0a2016; color: #fbbf24;
-            padding: 8px 14px; border-radius: 6px 6px 0 0;
-            font-weight: 700; font-size: 14px; text-align: center;
-        }
-        .tips-card {
-            background: white; border: 1px solid #ddd; border-top: none;
-            border-radius: 0 0 6px 6px; padding: 10px 12px;
-        }
-        .tips-match {
-            display: flex; align-items: baseline; padding: 6px 0;
-            border-bottom: 1px dashed #eee; font-size: 13px;
-        }
-        .tips-match:last-child { border-bottom: none; }
-        .tips-match .match-name { flex: 1; font-weight: 600; color: #333; }
-        .tips-match .scores { display: flex; gap: 6px; }
-        .tips-match .scores span {
-            background: #fff3cd; color: #856404;
-            padding: 2px 8px; border-radius: 4px;
-            font-weight: 700; font-size: 13px;
-        }
-        .tips-note {
-            text-align: center; color: #999; font-size: 11px;
-            padding-top: 6px; border-top: 1px solid #eee; margin-top: 4px;
-        }
         .bottom-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: rgba(0,0,0,0.7); color: white; text-align: center;
@@ -79,51 +50,15 @@
         <span style="font-size:12px;font-weight:700;color:#fbbf24" id="statusText">加载中...</span>
     </div>
     <div class="match-tabs" id="matchTabs">
-        <span class="active" data-img="por-uzb.jpg" data-time="06/23 23:07" onclick="switchTab(this)">🇵🇹 葡萄牙 vs 乌兹别克 🇺🇿</span>
-        <span data-img="eng-gha.jpg" data-time="06/23 23:07" onclick="switchTab(this)">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英格兰 vs 加纳 🇬🇭</span>
-        <span data-img="col-cod.jpg" data-time="06/23 23:07" onclick="switchTab(this)">🇨🇴 哥伦比亚 vs 刚果 🇨🇩</span>
-        <span data-img="pan-cro.jpg" data-time="06/23 23:07" onclick="switchTab(this)">🇵🇦 巴拿马 vs 克罗地亚 🇭🇷</span>
+        <span class="active" data-img="sco-bra.jpg" data-time="06/24 12:11" onclick="switchTab(this)">🏴󠁧󠁢󠁳󠁣󠁴󠁿 苏格兰 vs 巴西 🇧🇷</span>
+        <span data-img="mor-hai.jpg" data-time="06/24 12:11" onclick="switchTab(this)">🇲🇦 摩洛哥 vs 海地 🇭🇹</span>
+        <span data-img="sui-can.jpg" data-time="06/24 12:11" onclick="switchTab(this)">🇨🇭 瑞士 vs 加拿大 🇨🇦</span>
+        <span data-img="bih-qat.jpg" data-time="06/24 12:11" onclick="switchTab(this)">🇧🇦 波黑 vs 卡塔尔 🇶🇦</span>
+        <span data-img="saf-kor.jpg" data-time="06/24 12:11" onclick="switchTab(this)">🇿🇦 南非 vs 韩国 🇰🇷</span>
     </div>
-    <div class="tips-section">
-        <div class="tips-title">👑 群主心水 · 比分推荐</div>
-        <div class="tips-card">
-            <div class="tips-match">
-                <span class="match-name">🇵🇹 葡萄牙 vs 乌兹别克 🇺🇿</span>
-                <div class="scores">
-                    <span>3:0</span>
-                    <span>4:0</span>
-                    <span>5:0</span>
-                </div>
-            </div>
-            <div class="tips-match">
-                <span class="match-name">🏴󠁧󠁢󠁥󠁮󠁧󠁿 英格兰 vs 加纳 🇬🇭</span>
-                <div class="scores">
-                    <span>1:1</span>
-                    <span>2:1</span>
-                    <span>3:1</span>
-                </div>
-            </div>
-            <div class="tips-match">
-                <span class="match-name">🇵🇦 巴拿马 vs 克罗地亚 🇭🇷</span>
-                <div class="scores">
-                    <span>0:1</span>
-                    <span>0:2</span>
-                </div>
-            </div>
-            <div class="tips-match">
-                <span class="match-name">🇨🇴 哥伦比亚 vs 刚果 🇨🇩</span>
-                <div class="scores">
-                    <span>1:1</span>
-                    <span>2:1</span>
-                </div>
-            </div>
-            <div class="tips-note">💡 仅供参考，实际赔率为准</div>
-        </div>
-    </div>
-
     <div class="screenshot-wrap" id="screenshotWrap">
-        <span class="time-tag" id="timeTag">更新于 06/23 23:07</span>
-        <img id="oddsImage" src="por-uzb.jpg?v=2307" alt="赔率截图" style="width:100%" onload="document.getElementById('statusText').textContent='就绪'" onerror="document.getElementById('statusText').textContent='加载失败'">
+        <span class="time-tag" id="timeTag">更新于 06/24 12:11</span>
+        <img id="oddsImage" src="sco-bra.jpg?v=1211" alt="赔率截图" style="width:100%" onload="document.getElementById('statusText').textContent='就绪'" onerror="document.getElementById('statusText').textContent='加载失败'">
     </div>
 
     <div class="bottom-bar">📸 赔率截图 · 第一次加载较慢请耐心等待 🌸</div>
